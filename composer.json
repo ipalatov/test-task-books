@@ -1,0 +1,9 @@
+{
+    "name": "ipalatov/test-task-books",
+    "description": "Test task books&authors from employer. Task description is located file: /test_task_books.txt",
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    }
+}
