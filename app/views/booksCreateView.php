@@ -23,9 +23,9 @@
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= ROOT . '' ?>books/index">Список книг</a>
+    <a href="<?= $ini['app_root'] . '' ?>books/index">Список книг</a>
 </div>
 
 <div style="padding: 20px;">
-    <a href="<?= ROOT . '' ?>">На главную страницу</a>
+    <a href="<?= $ini['app_main'] . '' ?>">На главную страницу</a>
 </div>

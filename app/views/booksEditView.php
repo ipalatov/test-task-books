@@ -30,23 +30,23 @@
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= ROOT . "books/show?id={$books['id']}" ?>">
+    <a href="<?= $ini['app_root'] . "books/show?id={$books['id']}" ?>">
         Назад </a>
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= ROOT . '' ?>books/index">Список книг</a>
+    <a href="<?= $ini['app_root'] . '' ?>books/index">Список книг</a>
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= ROOT . 'books/create' ?>">Добавить новую книгу</a>
+    <a href="<?= $ini['app_root'] . 'books/create' ?>">Добавить новую книгу</a>
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= ROOT . "books/delete?id={$books['id']}" ?>">Удалить книгу</a>
+    <a href="<?= $ini['app_root'] . "books/delete?id={$books['id']}" ?>">Удалить книгу</a>
 </div>
 
 
 <div style="padding: 20px;">
-    <a href="<?= ROOT . '' ?>">На главную страницу</a>
+    <a href="<?= $ini['app_main'] . '' ?>">На главную страницу</a>
 </div>

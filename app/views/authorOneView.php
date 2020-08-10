@@ -25,7 +25,7 @@
         <?php foreach ($books as $book) : ?>
             <tr>
                 <td>
-                    <a href="<?= ROOT . "books/show?id={$book['id']}" ?>"><?= $book['title'] ?></a>
+                    <a href="<?= $ini['app_root'] . "books/show?id={$book['id']}" ?>"><?= $book['title'] ?></a>
                 </td>
                 <td>
                     <span><?= $book['genre'] ?></span>
@@ -42,21 +42,21 @@
 
 
 <div style="padding: 10px;">
-    <a href="<?= ROOT . '' ?>authors/index">Список авторов</a>
+    <a href="<?= $ini['app_root'] . '' ?>authors/index">Список авторов</a>
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= ROOT . 'authors/create' ?>">Добавить нового автора</a>
+    <a href="<?= $ini['app_root'] . 'authors/create' ?>">Добавить нового автора</a>
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= ROOT . "authors/edit?id={$authors['id']}" ?>">Редактировать автора</a>
+    <a href="<?= $ini['app_root'] . "authors/edit?id={$authors['id']}" ?>">Редактировать автора</a>
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= ROOT . "authors/delete?id={$authors['id']}" ?>">Удалить автора</a>
+    <a href="<?= $ini['app_root'] . "authors/delete?id={$authors['id']}" ?>">Удалить автора</a>
 </div>
 
 <div style="padding: 20px;">
-    <a href="<?= ROOT . '' ?>">На главную страницу</a>
+    <a href="<?= $ini['app_main'] . '' ?>">На главную страницу</a>
 </div>

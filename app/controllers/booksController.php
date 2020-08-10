@@ -41,8 +41,9 @@ class booksController extends Controller
 
         $authors = $this->modelAuthors->getIndex();
 
-        $this->view->render('booksCreateView.php', 'layoutView.php', null, $authors, $genres);
         $this->modelBooks->addBook();
+
+        $this->view->render('booksCreateView.php', 'layoutView.php', null, $authors, $genres);
     }
 
     public function actionShow()
@@ -59,15 +60,17 @@ class booksController extends Controller
 
         $authors = $this->modelAuthors->getIndex();
 
-        $this->view->render('booksEditView.php', 'layoutView.php', $book, $authors, $genres);
         $this->modelBooks->updateBook();
+
+        $this->view->render('booksEditView.php', 'layoutView.php', $book, $authors, $genres);
     }
 
     public function actionDelete()
     {
         $book = $this->modelBooks->getOne();
 
-        $this->view->render('bookDeleteView.php', 'layoutView.php', $book);
         $this->modelBooks->deleteBook();
+
+        $this->view->render('bookDeleteView.php', 'layoutView.php', $book);
     }
 }

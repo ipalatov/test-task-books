@@ -97,66 +97,68 @@ class Authors extends Model
 
     public function addAuthor()
     {
-        if (!isset($_POST['submit'])) die;
+        if (isset($_POST['submit'])) {
+            $name = isset($_POST['name']) ? $_POST['name'] : null;
 
-        $name = isset($_POST['name']) ? $_POST['name'] : null;
+            // валидация
+            $name = $this->validateName($name);
 
-        // валидация
-        $name = $this->validateName($name);
+            // запрос на добавление автора
+            $sqlAuthor = "INSERT INTO authors (`name`) VALUES ('$name')";
+            $this->mysql->query($sqlAuthor);
 
-        // запрос на добавление автора
-        $sqlAuthor = "INSERT INTO authors (`name`) VALUES ('$name')";
-        $this->mysql->query($sqlAuthor);
-
-        // проверяем ошибки
-        if (!empty($this->mysql->errno)) {
-            echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
-        } else {
-            echo 'Запись успешно добавлена в базу данных!';
-        }
+            // проверяем ошибки
+            if (!empty($this->mysql->errno)) {
+                echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+            } else {
+                echo 'Запись успешно добавлена в базу данных!';
+            }
+        };
     }
 
     public function updateAuthor()
     {
-        if (!isset($_POST['submit'])) die;
-        $id = $this->getIdFromUrl();
-        if (empty($id)) {
-            echo 'Автор не найден';
-            die;
-        }
+        if (isset($_POST['submit'])) {
+            $id = $this->getIdFromUrl();
+            if (empty($id)) {
+                echo 'Автор не найден';
+                die;
+            }
 
-        $name = isset($_POST['name']) ? $_POST['name'] : null;
+            $name = isset($_POST['name']) ? $_POST['name'] : null;
 
-        // валидация
-        $name = $this->validateName($name, 1);
+            // валидация
+            $name = $this->validateName($name, 1);
 
-        // запрос на обновление автора
-        $sqlAuthor = "UPDATE authors SET `name` = '$name' WHERE `id`='$id'";
-        $this->mysql->query($sqlAuthor);
+            // запрос на обновление автора
+            $sqlAuthor = "UPDATE authors SET `name` = '$name' WHERE `id`='$id'";
+            $this->mysql->query($sqlAuthor);
 
-        // проверяем ошибки
-        if (!empty($this->mysql->errno)) {
-            echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
-        } else {
-            echo 'Запись успешно изменена!';
-            header("Refresh:0");
+            // проверяем ошибки
+            if (!empty($this->mysql->errno)) {
+                echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+            } else {
+                echo 'Запись успешно изменена!';
+                header("Refresh:0");
+            }
         }
     }
     public function deleteAuthor()
     {
-        if (!isset($_POST['submit'])) die;
-        $id = $this->getIdFromUrl();
-        if (empty($id)) {
-            echo 'Автор не найден';
-            die;
-        }
-        // запрос на удаление автора
-        $delSql = "DELETE FROM authors WHERE `id`= '$id'";
-        $this->mysql->query($delSql);
-        if (!empty($this->mysql->errno)) {
-            echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
-        } else {
-            echo 'Запись успешно удалена!';
-        }
+        if (isset($_POST['submit'])) {
+            $id = $this->getIdFromUrl();
+            if (empty($id)) {
+                echo 'Автор не найден';
+                die;
+            }
+            // запрос на удаление автора
+            $delSql = "DELETE FROM authors WHERE `id`= '$id'";
+            $this->mysql->query($delSql);
+            if (!empty($this->mysql->errno)) {
+                echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+            } else {
+                echo 'Запись успешно удалена!';
+            }
+        };
     }
 }

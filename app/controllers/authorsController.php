@@ -33,22 +33,21 @@ class authorsController extends Controller
 
     public function actionCreate()
     {
-        $this->view->render('authorsCreateView.php', 'layoutView.php');
         $this->modelAuthors->addAuthor();
+        $this->view->render('authorsCreateView.php', 'layoutView.php');
     }
 
     public function actionEdit()
     {
         $author = $this->modelAuthors->getOne();
-        $this->view->render('authorsEditView.php', 'layoutView.php', null, $author);
         $this->modelAuthors->updateAuthor();
+        $this->view->render('authorsEditView.php', 'layoutView.php', null, $author);
     }
 
     public function actionDelete()
     {
         $author = $this->modelAuthors->getOne();
-
-        $this->view->render('authorDeleteView.php', 'layoutView.php', null, $author);
         $this->modelAuthors->deleteAuthor();
+        $this->view->render('authorDeleteView.php', 'layoutView.php', null, $author);
     }
 }

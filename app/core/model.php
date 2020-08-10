@@ -16,7 +16,9 @@ abstract class Model
     static function DBConnect()
     {
         $mysql = new mysqli();
-        $mysql->connect('localhost', 'ivan', '2222', 'test_books');
+        $ini = parse_ini_file('./app/core/config.ini');
+
+        $mysql->connect($ini['db_host'], $ini['db_user'], $ini['db_password'], $ini['db_name']);
         if ($mysql->connect_errno) {
             echo 'Ошибка подключения к базе данных (' . $mysql->connect_errno . '): ' . $mysql->connect_error;
             exit();
@@ -26,6 +28,6 @@ abstract class Model
 
         return $mysql;
     }
-    
-    abstract public function getIndex();    
+
+    abstract public function getIndex();
 }

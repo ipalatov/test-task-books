@@ -11,22 +11,22 @@
 
 
 <div style="padding: 10px;">
-    <a href="<?= ROOT . "authors/show?id={$authors['id']}" ?>">
+    <a href="<?= $ini['app_root'] . "authors/show?id={$authors['id']}" ?>">
         Назад </a>
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= ROOT . '' ?>authors/index">Список авторов</a>
+    <a href="<?= $ini['app_root'] . '' ?>authors/index">Список авторов</a>
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= ROOT . 'authors/create' ?>">Добавить нового автора</a>
+    <a href="<?= $ini['app_root'] . 'authors/create' ?>">Добавить нового автора</a>
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= ROOT . "authors/edit?id={$books['id']}" ?>">Редактировать автора</a>
+    <a href="<?= $ini['app_root'] . "authors/edit?id={$books['id']}" ?>">Редактировать автора</a>
 </div>
 
 <div style="padding: 20px;">
-    <a href="<?= ROOT . '' ?>">На главную страницу</a>
+    <a href="<?= $ini['app_main'] . '' ?>">На главную страницу</a>
 </div>

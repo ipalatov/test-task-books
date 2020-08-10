@@ -22,7 +22,7 @@ class Books extends Model
         throw new \Exception("Cannot unserialize a singleton.");
     }
 
-    // синглтон для создание не более одного эксземпляра модели
+    // синглтон для создания не более одного эксземпляра модели
     public static function getBookInstance(): Books
     {
         $cls = static::class;
@@ -228,102 +228,103 @@ class Books extends Model
 
     public function addBook()
     {
-        if (!isset($_POST['submit'])) die;
+        if (isset($_POST['submit'])) {
+            $title = isset($_POST['title']) ? $_POST['title'] : null;
+            $genre_id = isset($_POST['genre_id']) ? (int) $_POST['genre_id'] : null;
+            $authors_id = isset($_POST['authors_id']) ? $_POST['authors_id'] : null;
+            $year = isset($_POST['year']) ? (int) $_POST['year'] : null;
 
-        $title = isset($_POST['title']) ? $_POST['title'] : null;
-        $genre_id = isset($_POST['genre_id']) ? (int) $_POST['genre_id'] : null;
-        $authors_id = isset($_POST['authors_id']) ? $_POST['authors_id'] : null;
-        $year = isset($_POST['year']) ? (int) $_POST['year'] : null;
+            // валидация
+            $title = $this->validateTitle($title);
+            $year = $this->validateYear($year);
 
-        // валидация
-        $title = $this->validateTitle($title);
-        $year = $this->validateYear($year);
+            // добавляем книгу
+            $sqlBook = "INSERT INTO books (`title`, `genre_id`, `year`) VALUES ('$title', '$genre_id' , '$year')";
+            $this->mysql->query($sqlBook);
 
-        // добавляем книгу
-        $sqlBook = "INSERT INTO books (`title`, `genre_id`, `year`) VALUES ('$title', '$genre_id' , '$year')";
-        $this->mysql->query($sqlBook);
-
-        // проверяем ошибки и получаем последний id в таблице книги
-        if (!empty($this->mysql->errno)) {
-            echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
-        } else {
-            $lastId = $this->mysql->insert_id;
-
-            // заносим в связующую таблицу последний id книги и id каждого автора из формы
-            foreach ($authors_id as $author_id) {
-                $sqlBookAuthor = "INSERT INTO book_author (`book_id`, `author_id`) VALUES ('$lastId', '$author_id')";
-                $this->mysql->query($sqlBookAuthor);
-            }
-
-            // проверяем на ошибку и сообщаем успешность
+            // проверяем ошибки и получаем последний id в таблице книги
             if (!empty($this->mysql->errno)) {
                 echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
             } else {
-                echo 'Запись успешно добавлена в базу данных!';
+                $lastId = $this->mysql->insert_id;
+
+                // заносим в связующую таблицу последний id книги и id каждого автора из формы
+                foreach ($authors_id as $author_id) {
+                    $sqlBookAuthor = "INSERT INTO book_author (`book_id`, `author_id`) VALUES ('$lastId', '$author_id')";
+                    $this->mysql->query($sqlBookAuthor);
+                }
+
+                // проверяем на ошибку и сообщаем успешность
+                if (!empty($this->mysql->errno)) {
+                    echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+                } else {
+                    echo 'Запись успешно добавлена в базу данных!';
+                }
             }
         }
     }
 
     public function updateBook()
     {
-        if (!isset($_POST['submit'])) die;
-
-        $id = $this->getIdFromUrl();
-        if (empty($id)) {
-            echo 'Книга не найдена';
-            die;
-        }
-
-        $title = isset($_POST['title']) ? $_POST['title'] : null;
-        $genre_id = isset($_POST['genre_id']) ? (int) $_POST['genre_id'] : null;
-        $authors_id = isset($_POST['authors_id']) ? $_POST['authors_id'] : null;
-        $year = isset($_POST['year']) ? (int) $_POST['year'] : null;
-
-        // валидация
-        $title = $this->validateTitle($title, 1);
-        $year = $this->validateYear($year);
-
-        // обновляем книгу
-        $sqlBook = "UPDATE books SET `title`='$title', `genre_id`='$genre_id', `year`='$year' WHERE `id`='$id'";
-        $this->mysql->query($sqlBook);
-
-        // проверяем ошибки 
-        if (!empty($this->mysql->errno)) {
-            echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
-        } else {
-
-            // удаляем в связующей таблице записи по id книги и добавляем новые записи id каждого автора из формы
-            $delSql = "DELETE FROM book_author WHERE `book_id`= '$id'";
-            $this->mysql->query($delSql);
-            foreach ($authors_id as $author_id) {
-                $sqlBookAuthor = "INSERT INTO book_author (`book_id`, `author_id`) VALUES ('$id', '$author_id')";
-                $this->mysql->query($sqlBookAuthor);
+        if (isset($_POST['submit'])) {
+            $id = $this->getIdFromUrl();
+            if (empty($id)) {
+                echo 'Книга не найдена';
+                die;
             }
 
-            // проверяем на ошибку и сообщаем успешность
+            $title = isset($_POST['title']) ? $_POST['title'] : null;
+            $genre_id = isset($_POST['genre_id']) ? (int) $_POST['genre_id'] : null;
+            $authors_id = isset($_POST['authors_id']) ? $_POST['authors_id'] : null;
+            $year = isset($_POST['year']) ? (int) $_POST['year'] : null;
+
+            // валидация
+            $title = $this->validateTitle($title, 1);
+            $year = $this->validateYear($year);
+
+            // обновляем книгу
+            $sqlBook = "UPDATE books SET `title`='$title', `genre_id`='$genre_id', `year`='$year' WHERE `id`='$id'";
+            $this->mysql->query($sqlBook);
+
+            // проверяем ошибки 
             if (!empty($this->mysql->errno)) {
                 echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
             } else {
-                echo 'Запись успешно изменена!';
-                header("Refresh:0");
+
+                // удаляем в связующей таблице записи по id книги и добавляем новые записи id каждого автора из формы
+                $delSql = "DELETE FROM book_author WHERE `book_id`= '$id'";
+                $this->mysql->query($delSql);
+                foreach ($authors_id as $author_id) {
+                    $sqlBookAuthor = "INSERT INTO book_author (`book_id`, `author_id`) VALUES ('$id', '$author_id')";
+                    $this->mysql->query($sqlBookAuthor);
+                }
+
+                // проверяем на ошибку и сообщаем успешность
+                if (!empty($this->mysql->errno)) {
+                    echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+                } else {
+                    echo 'Запись успешно изменена!';
+                    header("Refresh:0");
+                }
             }
-        }
+        };
     }
     public function deleteBook()
     {
-        if (!isset($_POST['submit'])) die;
-        $id = $this->getIdFromUrl();
-        if (empty($id)) {
-            echo 'Книга не найдена';
-            die;
-        }
-        // удаление книги и сообщение об успешности или ошибке
-        $delSql = "DELETE FROM books WHERE `id`= '$id'";
-        $this->mysql->query($delSql);
-        if (!empty($this->mysql->errno)) {
-            echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
-        } else {
-            echo 'Запись успешно удалена!';
+        if (isset($_POST['submit'])) {
+            $id = $this->getIdFromUrl();
+            if (empty($id)) {
+                echo 'Книга не найдена';
+                die;
+            }
+            // удаление книги и сообщение об успешности или ошибке
+            $delSql = "DELETE FROM books WHERE `id`= '$id'";
+            $this->mysql->query($delSql);
+            if (!empty($this->mysql->errno)) {
+                echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+            } else {
+                echo 'Запись успешно удалена!';
+            }
         }
     }
 
