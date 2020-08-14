@@ -2,7 +2,7 @@
 <br>
 
 <div style="padding: 20px;">
-    <span> Удалить автора "<?= $authors['name'] ?>" ? </span>
+    <span> Удалить автора "<?= htmlspecialchars($authors['name']) ?>" ? </span>
 </div>
 <form method="POST" action="">
     <p><input type="submit" name="submit" value="Удалить автора"></p>

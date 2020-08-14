@@ -20,13 +20,13 @@
 
         <tr>
             <td>
-                <span><?= $books['title'] ?></span>
+                <span><?= htmlspecialchars($books['title']) ?></span>
             </td>
             <td>
                 <span><?= $books['genre'] ?></span>
             </td>
             <td>
-                <span><?= $books['author'] ?></span>
+                <span><?= htmlspecialchars($books['author']) ?></span>
             </td>
             <td>
                 <span><?= $books['year'] ?></span>

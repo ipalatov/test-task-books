@@ -3,7 +3,7 @@
 <div style="padding: 20px;">
     <form method="POST" action="">
         <label for="title">Название книги</label>
-        <input id="title" type="text" name="title" value="<?= $books['title'] ?>"><br>
+        <input id="title" type="text" name="title" value="<?= htmlspecialchars($books['title']) ?>"><br>
 
         <label for="genre_id">Жанр</label><br>
         <?php foreach ($genres as $genre) : ?>
@@ -19,7 +19,7 @@
             <input type="checkbox" <?php foreach ($books['author'] as $bookAuthor) {
                                         if ($bookAuthor == $author['name']) echo 'checked';
                                     }
-                                    ?> id="authors_id" name="authors_id[]" value="<?= $author['id'] ?>"><?= $author['name'] ?><br>
+                                    ?> id="authors_id" name="authors_id[]" value="<?= $author['id'] ?>"><?= htmlspecialchars($author['name']) ?><br>
         <?php endforeach; ?>
 
         <label for="year">Год издания</label>

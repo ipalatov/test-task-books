@@ -2,7 +2,7 @@
 <br>
 
 <div style="padding: 20px;">
-    <span> Удалить книгу "<?= $books['title'] ?>" автора(ов) <?= $books['author'] ?> ? </span>
+    <span> Удалить книгу "<?= htmlspecialchars($books['title']) ?>" автора(ов) <?= htmlspecialchars($books['author']) ?> ? </span>
 </div>
 <form method="POST" action="">
     <p><input type="submit" name="submit" value="Удалить книгу"></p>

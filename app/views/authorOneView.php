@@ -2,7 +2,7 @@
 <br>
 
 <div style="padding: 20px;">
-    <span> <b><?= $authors['name'] ?> </b></span>
+    <span> <b><?= htmlspecialchars($authors['name']) ?> </b></span>
 </div>
 <div style="padding: 20px;">
     <span> Все книги автора: </span>
@@ -25,7 +25,7 @@
         <?php foreach ($books as $book) : ?>
             <tr>
                 <td>
-                    <a href="<?= $ini['app_root'] . "books/show?id={$book['id']}" ?>"><?= $book['title'] ?></a>
+                    <a href="<?= $ini['app_root'] . "books/show?id={$book['id']}" ?>"><?= htmlspecialchars($book['title']) ?></a>
                 </td>
                 <td>
                     <span><?= $book['genre'] ?></span>

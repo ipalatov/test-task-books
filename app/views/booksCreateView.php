@@ -12,7 +12,7 @@
 
         <label for="authors_id">Автор</label><br>
         <?php foreach ($authors as $author) : ?>
-            <input type="checkbox" id="authors_id" name="authors_id[]" value="<?= $author['id'] ?>"><?= $author['name'] ?><br>
+            <input type="checkbox" id="authors_id" name="authors_id[]" value="<?= $author['id'] ?>"><?= htmlspecialchars($author['name']) ?><br>
         <?php endforeach; ?>
 
         <label for="year">Год издания</label>

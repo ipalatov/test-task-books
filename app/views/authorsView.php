@@ -13,7 +13,7 @@
         <?php foreach ($authors as $author) : ?>
             <tr>
                 <td>
-                    <a href="<?= $ini['app_root'] . "authors/show?id={$author['id']}" ?>"><?= $author['name'] ?></a>
+                    <a href="<?= $ini['app_root'] . "authors/show?id={$author['id']}" ?>"><?= htmlspecialchars($author['name']) ?></a>
                 </td>
                 <td>
                     <span><?= $author['bookNum'] ?> </span>

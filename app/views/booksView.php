@@ -30,13 +30,13 @@
                 <?php foreach ($books as $book) : ?>
                     <tr>
                         <td>
-                            <a href="<?= $ini['app_root'] . "books/show?id={$book['id']}" ?>"><?= $book['title'] ?></a>
+                            <a href="<?= $ini['app_root'] . "books/show?id={$book['id']}" ?>"><?= htmlspecialchars($book['title']) ?></a>
                         </td>
                         <td>
                             <span><?= $book['genre'] ?></span>
                         </td>
                         <td>
-                            <span><?= $book['author'] ?></span>
+                            <span><?= htmlspecialchars($book['author']) ?></span>
                         </td>
                         <td>
                             <span><?= $book['year'] ?></span>
@@ -59,7 +59,7 @@
                                                                                                 if ($sessAuthor == $author['id']) echo 'checked';
                                                                                             }
                                                                                         }
-                                                                                        ?>><?= $author['name'] ?><Br>
+                                                                                        ?>><?= htmlspecialchars($author['name']) ?><Br>
                 <?php endforeach; ?>
             </p>
             <p>по жанру</p>
