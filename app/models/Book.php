@@ -108,11 +108,8 @@ class Book extends Model
         return $total;
     }
 
-
-    public function getIndex($offset = null, $limit = null)
+    static function getSorting()
     {
-
-        // сортировка
         $sorting = 'book_id ASC';
 
         if (isset($_GET['sort'])) {
@@ -128,6 +125,15 @@ class Book extends Model
                     break;
             }
         }
+        return $sorting;
+    }
+
+
+    public function getIndex($offset = null, $limit = null)
+    {
+
+        // сортировка
+        $sorting = static::getSorting();
 
         // переменные для запроса по условиям фильтра
         $queryAuthors = static::getQueryAuthors();

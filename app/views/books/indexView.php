@@ -4,10 +4,12 @@
     <div style="flex-grow: 3;">
         <div style="padding: 20px;">
             <span>Сортировка по:</span>
+            <ul>
+                <li><a href="?sort=title">названию | </a></li>
+                <li><a href="?sort=year">по году издания | </a></li>
+                <li><a href="?">без сортировки</a></li>
+            </ul>
 
-            <a href="?sort=title">названию |</a>
-
-            <a href="?sort=year"> по году издания</a>
         </div>
 
         <div style="padding: 20px;">
