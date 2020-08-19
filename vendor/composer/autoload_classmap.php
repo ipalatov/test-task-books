@@ -6,15 +6,15 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    'App\\controllers\\authorsController' => $baseDir . '/app/controllers/authorsController.php',
-    'App\\controllers\\booksController' => $baseDir . '/app/controllers/booksController.php',
-    'App\\controllers\\mainController' => $baseDir . '/app/controllers/mainController.php',
-    'App\\core\\Controller' => $baseDir . '/app/core/controller.php',
-    'App\\core\\Model' => $baseDir . '/app/core/model.php',
-    'App\\core\\Pagination' => $baseDir . '/app/core/pagination.php',
-    'App\\core\\Route' => $baseDir . '/app/core/route.php',
-    'App\\core\\View' => $baseDir . '/app/core/view.php',
-    'App\\models\\Authors' => $baseDir . '/app/models/authors.php',
-    'App\\models\\Books' => $baseDir . '/app/models/books.php',
-    'App\\models\\Genres' => $baseDir . '/app/models/genres.php',
+    'App\\controllers\\AuthorsController' => $baseDir . '/app/controllers/AuthorsController.php',
+    'App\\controllers\\BooksController' => $baseDir . '/app/controllers/BooksController.php',
+    'App\\controllers\\MainController' => $baseDir . '/app/controllers/MainController.php',
+    'App\\core\\Controller' => $baseDir . '/app/core/Controller.php',
+    'App\\core\\Model' => $baseDir . '/app/core/Model.php',
+    'App\\core\\Pagination' => $baseDir . '/app/core/Pagination.php',
+    'App\\core\\Route' => $baseDir . '/app/core/Route.php',
+    'App\\core\\View' => $baseDir . '/app/core/View.php',
+    'App\\models\\Author' => $baseDir . '/app/models/Author.php',
+    'App\\models\\Book' => $baseDir . '/app/models/Book.php',
+    'App\\models\\Genre' => $baseDir . '/app/models/Genre.php',
 );

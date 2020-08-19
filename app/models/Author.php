@@ -4,7 +4,7 @@ namespace App\models;
 
 use App\core\Model;
 
-class Authors extends Model
+class Author extends Model
 {
     private static $authorInstances = [];
 
@@ -22,8 +22,8 @@ class Authors extends Model
         throw new \Exception("Cannot unserialize a singleton.");
     }
 
-    // синглтон для создание не более одного эксземпляра модели
-    public static function getAuthorInstance(): Authors
+    // синглтон для создания не более одного эксземпляра модели
+    public static function getAuthorInstance(): Author
     {
         $cls = static::class;
         if (!isset(self::$authorInstances[$cls])) {

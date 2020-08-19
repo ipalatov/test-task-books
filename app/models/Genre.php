@@ -4,7 +4,7 @@ namespace App\models;
 
 use App\core\Model;
 
-class Genres extends Model
+class Genre extends Model
 {
 
     private static $genreInstances = [];
@@ -22,8 +22,8 @@ class Genres extends Model
     {
         throw new \Exception("Cannot unserialize a singleton.");
     }
-    // синглтон для создание не более одного эксземпляра модели
-    public static function getGenreInstance(): Genres
+    // синглтон для создания не более одного эксземпляра модели
+    public static function getGenreInstance(): Genre
     {
         $cls = static::class;
         if (!isset(self::$genreInstances[$cls])) {

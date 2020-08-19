@@ -1,7 +1,5 @@
 <?php
 
-// require_once 'app/bootstrap.php';
-
 use App\core\Route;
 
 require_once realpath("vendor/autoload.php");

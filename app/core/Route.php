@@ -25,7 +25,7 @@ class  Route
             $actionName = strstr($routeParts[$a], '?', TRUE) ? strstr($routeParts[$a], '?', TRUE) : $routeParts[$a];
         }
 
-        $controllerName = 'App\\controllers\\' . $controllerName . 'Controller';
+        $controllerName = 'App\\controllers\\' . ucfirst($controllerName) . 'Controller';
         $actionName = 'action' . ucfirst($actionName);
 
         // исключение на случай отсуствия класса

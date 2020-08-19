@@ -4,18 +4,18 @@ namespace App\controllers;
 
 use App\core\Controller;
 use App\core\Pagination;
-use App\models\Authors;
-use App\models\Books;
-use App\models\Genres;
+use App\models\Author;
+use App\models\Book;
+use App\models\Genre;
 
-class booksController extends Controller
+class BooksController extends Controller
 {
     public function __construct()
     {
         parent::__construct();
-        $this->modelBooks = Books::getBookInstance();
-        $this->modelAuthors = Authors::getAuthorInstance();
-        $this->modelGenres = Genres::getGenreInstance();
+        $this->modelBooks = Book::getBookInstance();
+        $this->modelAuthors = Author::getAuthorInstance();
+        $this->modelGenres = Genre::getGenreInstance();
     }
     public function actionIndex()
     {

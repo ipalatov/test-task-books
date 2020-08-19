@@ -4,7 +4,7 @@ namespace App\models;
 
 use App\core\Model;
 
-class Books extends Model
+class Book extends Model
 {
     private static $bookInstances = [];
 
@@ -23,7 +23,7 @@ class Books extends Model
     }
 
     // синглтон для создания не более одного эксземпляра модели
-    public static function getBookInstance(): Books
+    public static function getBookInstance(): Book
     {
         $cls = static::class;
         if (!isset(self::$bookInstances[$cls])) {

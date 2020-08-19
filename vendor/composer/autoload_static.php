@@ -21,17 +21,17 @@ class ComposerStaticInit81e1d009ed274a0f431095cc5f535e47
     );
 
     public static $classMap = array (
-        'App\\controllers\\authorsController' => __DIR__ . '/../..' . '/app/controllers/authorsController.php',
-        'App\\controllers\\booksController' => __DIR__ . '/../..' . '/app/controllers/booksController.php',
-        'App\\controllers\\mainController' => __DIR__ . '/../..' . '/app/controllers/mainController.php',
-        'App\\core\\Controller' => __DIR__ . '/../..' . '/app/core/controller.php',
-        'App\\core\\Model' => __DIR__ . '/../..' . '/app/core/model.php',
-        'App\\core\\Pagination' => __DIR__ . '/../..' . '/app/core/pagination.php',
-        'App\\core\\Route' => __DIR__ . '/../..' . '/app/core/route.php',
-        'App\\core\\View' => __DIR__ . '/../..' . '/app/core/view.php',
-        'App\\models\\Authors' => __DIR__ . '/../..' . '/app/models/authors.php',
-        'App\\models\\Books' => __DIR__ . '/../..' . '/app/models/books.php',
-        'App\\models\\Genres' => __DIR__ . '/../..' . '/app/models/genres.php',
+        'App\\controllers\\AuthorsController' => __DIR__ . '/../..' . '/app/controllers/AuthorsController.php',
+        'App\\controllers\\BooksController' => __DIR__ . '/../..' . '/app/controllers/BooksController.php',
+        'App\\controllers\\MainController' => __DIR__ . '/../..' . '/app/controllers/MainController.php',
+        'App\\core\\Controller' => __DIR__ . '/../..' . '/app/core/Controller.php',
+        'App\\core\\Model' => __DIR__ . '/../..' . '/app/core/Model.php',
+        'App\\core\\Pagination' => __DIR__ . '/../..' . '/app/core/Pagination.php',
+        'App\\core\\Route' => __DIR__ . '/../..' . '/app/core/Route.php',
+        'App\\core\\View' => __DIR__ . '/../..' . '/app/core/View.php',
+        'App\\models\\Author' => __DIR__ . '/../..' . '/app/models/Author.php',
+        'App\\models\\Book' => __DIR__ . '/../..' . '/app/models/Book.php',
+        'App\\models\\Genre' => __DIR__ . '/../..' . '/app/models/Genre.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

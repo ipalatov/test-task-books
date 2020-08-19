@@ -5,7 +5,7 @@ namespace App\controllers;
 use App\core\Controller;
 use App\core\View;
 
-class mainController extends Controller
+class MainController extends Controller
 {
 
     public function __construct()

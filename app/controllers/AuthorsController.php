@@ -3,17 +3,17 @@
 namespace App\controllers;
 
 use App\core\Controller;
-use App\models\Authors;
-use App\models\Books;
+use App\models\Author;
+use App\models\Book;
 
-class authorsController extends Controller
+class AuthorsController extends Controller
 {
 
     public function __construct()
     {
         parent::__construct();
-        $this->modelAuthors = Authors::getAuthorInstance();
-        $this->modelBooks = Books::getBookInstance();
+        $this->modelAuthors = Author::getAuthorInstance();
+        $this->modelBooks = Book::getBookInstance();
     }
 
     public function actionIndex()
