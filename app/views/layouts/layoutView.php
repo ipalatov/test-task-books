@@ -10,6 +10,17 @@
 </head>
 
 <body>
+    <div>
+        <ul>
+            <li><a href="<?= $ini['app_root'] . $ini['_main_'] ?>">На главную страницу</a></li>
+            <li><a href="<?= $ini['app_root'] ?>books/index">Список книг</a></li>
+            <li><a href="<?= $ini['app_root'] ?>authors/index">Список авторов</a></li>
+            <li><a href="<?= $ini['app_root'] . 'books/create' ?>">Добавить новую книгу</a></li>
+            <li><a href="<?= $ini['app_root'] . 'authors/create' ?>">Добавить нового автора</a></li>
+        </ul>
+    </div>
+
+
     <?php include 'app/views/' . $contentView; ?>
 </body>
 

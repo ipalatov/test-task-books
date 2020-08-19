@@ -29,24 +29,4 @@
     </form>
 </div>
 
-<div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . "books/show?id={$book['id']}" ?>">
-        Назад </a>
-</div>
-
-<div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . '' ?>books/index">Список книг</a>
-</div>
-
-<div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . 'books/create' ?>">Добавить новую книгу</a>
-</div>
-
-<div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . "books/delete?id={$book['id']}" ?>">Удалить книгу</a>
-</div>
-
-
-<div style="padding: 20px;">
-    <a href="<?= $ini['app_main'] . '' ?>">На главную страницу</a>
-</div>
+<?php require 'app/views/layouts/bookNav.php' ?>

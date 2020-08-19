@@ -8,11 +8,3 @@
         <p><input type="submit" name="submit" value="Добавить"></p>
     </form>
 </div>
-
-<div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . '' ?>authors/index">Список авторов</a>
-</div>
-
-<div style="padding: 20px;">
-    <a href="<?= $ini['app_main'] . '' ?>">На главную страницу</a>
-</div>

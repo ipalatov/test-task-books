@@ -94,12 +94,3 @@
 <div style="padding: 10px;">
     <?php if ($pagination->countPages > 1) echo $pagination->getHTML() ?>
 </div>
-
-<div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . 'books/create' ?>">Добавить новую книгу</a>
-</div>
-
-
-<div style="padding: 20px;">
-    <a href="<?= $ini['app_main'] ?>">На главную страницу</a>
-</div>

@@ -15,6 +15,6 @@ class MainController extends Controller
 
     public function actionIndex()
     {
-        $this->view->render('mainView.php', 'layoutView.php');
+        $this->view->render('main/indexView.php', 'layoutView.php');
     }
 }

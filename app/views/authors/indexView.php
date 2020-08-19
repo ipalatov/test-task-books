@@ -22,12 +22,3 @@
         <?php endforeach; ?>
     </table>
 </div>
-
-<div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . 'authors/create' ?>">Добавить нового автора</a>
-</div>
-
-
-<div style="padding: 20px;">
-    <a href="<?= $ini['app_main'] ?>">На главную страницу</a>
-</div>
