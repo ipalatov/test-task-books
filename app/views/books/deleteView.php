@@ -2,7 +2,7 @@
 <br>
 
 <div style="padding: 20px;">
-    <span> Удалить книгу "<?= htmlspecialchars($books['title']) ?>" автора(ов) <?= htmlspecialchars($books['author']) ?> ? </span>
+    <span> Удалить книгу "<?= htmlspecialchars($book['title']) ?>" автора(ов) <?= htmlspecialchars($book['author']) ?> ? </span>
 </div>
 <form method="POST" action="">
     <p><input type="submit" name="submit" value="Удалить книгу"></p>
@@ -11,7 +11,7 @@
 
 
 <div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . "books/show?id={$books['id']}" ?>">
+    <a href="<?= $ini['app_root'] . "books/show?id={$book['id']}" ?>">
         Назад </a>
 </div>
 
@@ -24,7 +24,7 @@
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . "books/edit?id={$books['id']}" ?>">Редактировать книгу</a>
+    <a href="<?= $ini['app_root'] . "books/edit?id={$book['id']}" ?>">Редактировать книгу</a>
 </div>
 
 <div style="padding: 20px;">

@@ -32,7 +32,7 @@ class BooksController extends Controller
 
         $genres = $this->modelGenres->getIndex();
 
-        $this->view->render('booksView.php', 'layoutView.php', $books, $authors, $genres, $pagination);
+        $this->view->render('books/indexView.php', 'layoutView.php', compact('books', 'authors', 'genres', 'pagination'));
     }
 
     public function actionCreate()
@@ -43,13 +43,13 @@ class BooksController extends Controller
 
         $this->modelBooks->addBook();
 
-        $this->view->render('booksCreateView.php', 'layoutView.php', null, $authors, $genres);
+        $this->view->render('books/createView.php', 'layoutView.php', compact('authors', 'genres'));
     }
 
     public function actionShow()
     {
         $book = $this->modelBooks->getOne();
-        $this->view->render('bookOneView.php', 'layoutView.php', $book);
+        $this->view->render('books/showView.php', 'layoutView.php', compact('book'));
     }
 
     public function actionEdit()
@@ -62,7 +62,7 @@ class BooksController extends Controller
 
         $this->modelBooks->updateBook();
 
-        $this->view->render('booksEditView.php', 'layoutView.php', $book, $authors, $genres);
+        $this->view->render('books/editView.php', 'layoutView.php', compact('book', 'genres', 'authors'));
     }
 
     public function actionDelete()
@@ -71,6 +71,6 @@ class BooksController extends Controller
 
         $this->modelBooks->deleteBook();
 
-        $this->view->render('bookDeleteView.php', 'layoutView.php', $book);
+        $this->view->render('books/deleteView.php', 'layoutView.php', compact('book'));
     }
 }

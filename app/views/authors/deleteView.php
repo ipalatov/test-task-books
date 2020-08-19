@@ -2,7 +2,7 @@
 <br>
 
 <div style="padding: 20px;">
-    <span> Удалить автора "<?= htmlspecialchars($authors['name']) ?>" ? </span>
+    <span> Удалить автора "<?= htmlspecialchars($author['name']) ?>" ? </span>
 </div>
 <form method="POST" action="">
     <p><input type="submit" name="submit" value="Удалить автора"></p>
@@ -11,7 +11,7 @@
 
 
 <div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . "authors/show?id={$authors['id']}" ?>">
+    <a href="<?= $ini['app_root'] . "authors/show?id={$author['id']}" ?>">
         Назад </a>
 </div>
 
@@ -24,7 +24,7 @@
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . "authors/edit?id={$books['id']}" ?>">Редактировать автора</a>
+    <a href="<?= $ini['app_root'] . "authors/edit?id={$author['id']}" ?>">Редактировать автора</a>
 </div>
 
 <div style="padding: 20px;">

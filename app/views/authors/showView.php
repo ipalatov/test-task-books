@@ -2,7 +2,7 @@
 <br>
 
 <div style="padding: 20px;">
-    <span> <b><?= htmlspecialchars($authors['name']) ?> </b></span>
+    <span> <b><?= htmlspecialchars($author['name']) ?> </b></span>
 </div>
 <div style="padding: 20px;">
     <span> Все книги автора: </span>
@@ -50,11 +50,11 @@
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . "authors/edit?id={$authors['id']}" ?>">Редактировать автора</a>
+    <a href="<?= $ini['app_root'] . "authors/edit?id={$author['id']}" ?>">Редактировать автора</a>
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . "authors/delete?id={$authors['id']}" ?>">Удалить автора</a>
+    <a href="<?= $ini['app_root'] . "authors/delete?id={$author['id']}" ?>">Удалить автора</a>
 </div>
 
 <div style="padding: 20px;">

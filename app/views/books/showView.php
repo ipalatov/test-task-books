@@ -20,16 +20,16 @@
 
         <tr>
             <td>
-                <span><?= htmlspecialchars($books['title']) ?></span>
+                <span><?= htmlspecialchars($book['title']) ?></span>
             </td>
             <td>
-                <span><?= $books['genre'] ?></span>
+                <span><?= $book['genre'] ?></span>
             </td>
             <td>
-                <span><?= htmlspecialchars($books['author']) ?></span>
+                <span><?= htmlspecialchars($book['author']) ?></span>
             </td>
             <td>
-                <span><?= $books['year'] ?></span>
+                <span><?= $book['year'] ?></span>
             </td>
         </tr>
     </table>
@@ -46,11 +46,11 @@
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . "books/edit?id={$books['id']}" ?>">Редактировать книгу</a>
+    <a href="<?= $ini['app_root'] . "books/edit?id={$book['id']}" ?>">Редактировать книгу</a>
 </div>
 
 <div style="padding: 10px;">
-    <a href="<?= $ini['app_root'] . "books/delete?id={$books['id']}" ?>">Удалить книгу</a>
+    <a href="<?= $ini['app_root'] . "books/delete?id={$book['id']}" ?>">Удалить книгу</a>
 </div>
 
 <div style="padding: 20px;">

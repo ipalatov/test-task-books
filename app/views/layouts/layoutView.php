@@ -1,3 +1,5 @@
+<?php if (isset($dataArray)) extract($dataArray);
+?>
 <!DOCTYPE html>
 <html lang="en">
 
