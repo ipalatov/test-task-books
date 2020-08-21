@@ -38,9 +38,15 @@ class Author extends Model
          bookNum 
          FROM `authors`
          ORDER BY `id`";
-
-        $result = $this->mysql->query($sql);
-        $data = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $pdoStat = $this->pdo->prepare($sql);
+        $pdoStat->execute();
+        // проверяем ошибки
+        $errorInfo = $pdoStat->errorInfo();
+        if ($errorInfo[1]) {
+            $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
+        } else {
+            $data = $pdoStat->fetchAll(\PDO::FETCH_ASSOC);
+        }
 
         return $data;
     }
@@ -51,10 +57,11 @@ class Author extends Model
         $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
         //проверка на существование id в записях базе данных
-        $sqlIsAuth = "SELECT id FROM `authors` WHERE `id` = '$id'";
-        $result = $this->mysql->query($sqlIsAuth);
+        $sqlIsAuth = "SELECT id FROM `authors` WHERE `id` = :id";
+        $pdoStat = $this->pdo->prepare($sqlIsAuth);
+        $pdoStat->execute(compact('id'));
 
-        if ($result->num_rows == 0) {
+        if ($pdoStat->rowCount() == 0) {
             $_SESSION['error'] = 'Автор не найден';
             header("Location: /authors/index");
             die;
@@ -68,27 +75,40 @@ class Author extends Model
 
         // запрос на одного автора
         $sql = "SELECT `id`, `name` FROM `authors`
-        WHERE `authors`.`id` = '$id'";
+        WHERE `authors`.`id` = :id";
+        $pdoStat = $this->pdo->prepare($sql);
+        $pdoStat->execute(compact('id'));
 
-        $result = $this->mysql->query($sql);
-        $authors = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        $author = $authors[0];
+        // проверяем ошибки
+        $errorInfo = $pdoStat->errorInfo();
+        if ($errorInfo[1]) {
+            $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
+        } else {
+            $author = $pdoStat->fetch(\PDO::FETCH_ASSOC);
+        }
+
+
+
 
         return $author;
     }
 
-    function validateName($name, $repNum = 0)
+    function validateName($name, $id = null)
     {
         // валидация на уникальность автора
-        $sqlUniqAuthor = "SELECT `id` FROM `authors` WHERE `name` = '$name'";
-        $result = $this->mysql->query($sqlUniqAuthor);
-        if ($result->num_rows > $repNum) {
+        $idQuery = ($id) ? "AND `id`<> int $id"  : "";
+        $sqlUniqAuthor = "SELECT `id` FROM `authors` WHERE `name` = :name $idQuery";
+        $params = compact('name');
+
+
+        $pdoStat = $this->pdo->prepare($sqlUniqAuthor);
+        $pdoStat->execute($params);
+        if ($pdoStat->rowCount() > 0) {
             $_SESSION['error'] = 'ошибка ввода - уже есть такой автор';
             header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
             die;
         }
-        // экранирование запроса от спец символов
-        return $this->mysql->real_escape_string($name);
+        return $name;
     }
 
     public function addAuthor()
@@ -100,14 +120,16 @@ class Author extends Model
             $name = $this->validateName($name);
 
             // запрос на добавление автора
-            $sqlAuthor = "INSERT INTO authors (`name`) VALUES ('$name')";
-            $this->mysql->query($sqlAuthor);
+            $sqlAuthor = "INSERT INTO authors (`name`) VALUES (:name)";
+            $pdoStat = $this->pdo->prepare($sqlAuthor);
+            $pdoStat->execute(compact('name'));
 
             // проверяем ошибки
-            if (!empty($this->mysql->errno)) {
-                $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+            $errorInfo = $pdoStat->errorInfo();
+            if ($errorInfo[1]) {
+                $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
             } else {
-                $lastId = $this->mysql->insert_id;
+                $lastId = $this->pdo->lastInsertId();
                 $_SESSION['message'] = "Запись [#$lastId ] добавлена в базу данных!";
                 unset($_SESSION['name']);
                 header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
@@ -116,23 +138,24 @@ class Author extends Model
         };
     }
 
-    public function updateAuthor()
+    public function updateAuthor($id)
     {
         if (isset($_POST['submit'])) {
-            $id = $this->getIdFromUrl();
 
             $name = isset($_POST['name']) ? $_POST['name'] : null;
 
             // валидация
-            $name = $this->validateName($name, 1);
+            $name = $this->validateName($name, $id);
 
             // запрос на обновление автора
-            $sqlAuthor = "UPDATE authors SET `name` = '$name' WHERE `id`='$id'";
-            $this->mysql->query($sqlAuthor);
+            $sqlAuthor = "UPDATE authors SET `name` = :name WHERE `id`=:id";
+            $pdoStat = $this->pdo->prepare($sqlAuthor);
+            $pdoStat->execute(compact('name', 'id'));
 
             // проверяем ошибки
-            if (!empty($this->mysql->errno)) {
-                $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+            $errorInfo = $pdoStat->errorInfo();
+            if ($errorInfo[1]) {
+                $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
             } else {
                 $_SESSION['message'] = "Запись [#$id ] успешно изменена!";
                 header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
@@ -141,16 +164,18 @@ class Author extends Model
         }
     }
 
-    public function deleteAuthor()
+    public function deleteAuthor($id)
     {
         if (isset($_POST['submit'])) {
-            $id = $this->getIdFromUrl();
 
             // запрос на удаление автора
-            $delSql = "DELETE FROM authors WHERE `id`= '$id'";
-            $this->mysql->query($delSql);
-            if (!empty($this->mysql->errno)) {
-                $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+            $delSql = "DELETE FROM authors WHERE `id`= :id";
+            $pdoStat = $this->pdo->prepare($delSql);
+            $pdoStat->execute(compact('id'));
+
+            $errorInfo = $pdoStat->errorInfo();
+            if ($errorInfo[1]) {
+                $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
             } else {
                 $_SESSION['message'] = "Запись [#$id ] успешно удалена!";
                 header("Location: /authors/index", true, 303);

@@ -34,10 +34,11 @@ class Genre extends Model
 
     public function getIndex()
     {
-        $sql = "SELECT *  FROM genres";
+        $sql = "SELECT `id`, `name` FROM genres";
+        $pdoStat = $this->pdo->prepare($sql);
+        $pdoStat->execute();
 
-        $result = $this->mysql->query($sql);
-        $data = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $data = $pdoStat->fetchAll(\PDO::FETCH_ASSOC);
 
         return $data;
     }

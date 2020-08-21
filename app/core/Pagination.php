@@ -21,11 +21,13 @@ class Pagination
 
     public function getCountPages()
     {
-        return ceil($this->total / $this->pageSize);
+        $countPages = ceil($this->total / $this->pageSize) > 0 ? ceil($this->total / $this->pageSize) : 1;
+        return $countPages;
     }
 
-    public function getCurrenPage($page)
+    public function getCurrenPage(int $page)
     {
+
         if (!$page || $page < 1) $page = 1;
         if ($page > $this->countPages) $page = $this->countPages;
         return $page;
@@ -34,7 +36,8 @@ class Pagination
     // возвращает OFFSET для sql запроса 
     public function getOffset()
     {
-        return ($this->currentPage - 1) * $this->pageSize;
+        $offset = ($this->currentPage - 1) * $this->pageSize;
+        return $offset;
     }
 
     // навигация

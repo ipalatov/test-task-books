@@ -26,9 +26,8 @@ class AuthorsController extends Controller
     public function actionShow()
     {
         $author = $this->modelAuthors->getOne();
-        $authorId = $this->modelAuthors->getIdFromUrl();
-        $books = $this->modelBooks->getBooksByAuthor($authorId);
-        $this->view->render('authors/showView.php', 'layoutView.php', compact('author', 'authorId', 'books'));
+        $books = $this->modelBooks->getBooksByAuthor($author['id']);
+        $this->view->render('authors/showView.php', 'layoutView.php', compact('author', 'books'));
     }
 
     public function actionCreate()
@@ -40,14 +39,14 @@ class AuthorsController extends Controller
     public function actionEdit()
     {
         $author = $this->modelAuthors->getOne();
-        $this->modelAuthors->updateAuthor();
+        $this->modelAuthors->updateAuthor($author['id']);
         $this->view->render('authors/editView.php', 'layoutView.php', compact('author'));
     }
 
     public function actionDelete()
     {
         $author = $this->modelAuthors->getOne();
-        $this->modelAuthors->deleteAuthor();
+        $this->modelAuthors->deleteAuthor($author['id']);
         $this->view->render('authors/deleteView.php', 'layoutView.php', compact('author'));
     }
 }

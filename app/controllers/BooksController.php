@@ -19,13 +19,11 @@ class BooksController extends Controller
     }
     public function actionIndex()
     {
-        $total = $this->modelBooks->getTotal();
         $page = isset($_GET['page']) ? (int) $_GET['page'] : 1;
         $pageSize = 10;
-
+        $total = $this->modelBooks->getTotal();
         $pagination = new Pagination($page, $pageSize, $total);
         $offset = $pagination->getOffset();
-
         $books = $this->modelBooks->getIndex($offset, $pageSize);
 
         $authors = $this->modelAuthors->getIndex();
@@ -60,7 +58,7 @@ class BooksController extends Controller
 
         $authors = $this->modelAuthors->getIndex();
 
-        $this->modelBooks->updateBook();
+        $this->modelBooks->updateBook($book['id']);
 
         $this->view->render('books/editView.php', 'layoutView.php', compact('book', 'genres', 'authors'));
     }
@@ -69,7 +67,7 @@ class BooksController extends Controller
     {
         $book = $this->modelBooks->getOne();
 
-        $this->modelBooks->deleteBook();
+        $this->modelBooks->deleteBook($book['id']);
 
         $this->view->render('books/deleteView.php', 'layoutView.php', compact('book'));
     }

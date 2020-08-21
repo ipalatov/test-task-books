@@ -3,6 +3,7 @@
 namespace App\models;
 
 use App\core\Model;
+use PDO;
 
 class Book extends Model
 {
@@ -113,22 +114,25 @@ class Book extends Model
         $queryGenres = static::getQueryGenres();
         $queryYears = static::getQueryYears();
 
-        $sql = "SELECT DISTINCT books.id FROM books
-        JOIN book_author ON (books.id = book_author.book_id)
-        JOIN authors ON (authors.id = book_author.author_id)
-        JOIN genres ON (books.genre_id = genres.id)
-        WHERE books.id > 0 $queryAuthors $queryGenres $queryYears";
+        $sql = "SELECT COUNT(DISTINCT `books`.`id`) AS `count` FROM `books`
+        JOIN `book_author` ON (`books`.`id` = `book_author`.`book_id`)
+        JOIN `authors` ON (`authors`.`id` = `book_author`.`author_id`)
+        JOIN `genres` ON (`books`.`genre_id` = `genres`.id)
+        WHERE `books`.`id` > 0 $queryAuthors $queryGenres $queryYears";
 
-        $result = $this->mysql->query($sql);
+        $pdoStat = $this->pdo->prepare($sql);
+        $pdoStat->execute();
 
-        $result = $this->mysql->query($sql);
-        if (!$result) {
-            $total = 0;
-        } else {
-            $total = $result->num_rows;
+        // проверка ошибок
+        $errorInfo = $pdoStat->errorInfo();
+        if ($errorInfo[1]) {
+            $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
+            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+            die;
         }
+        $total = $pdoStat->fetch(\PDO::FETCH_ASSOC);
 
-        return $total;
+        return $total['count'];
     }
 
     static function getSorting()
@@ -154,7 +158,6 @@ class Book extends Model
 
     public function getIndex($offset = null, $limit = null)
     {
-
         // сортировка
         $sorting = static::getSorting();
 
@@ -174,12 +177,21 @@ class Book extends Model
         ORDER BY $sorting
         LIMIT $offset, $limit";
 
-        $result = $this->mysql->query($sql);
-        if (!$result) {
+        $pdoStat = $this->pdo->prepare($sql);
+        $pdoStat->execute();
+
+        $errorInfo = $pdoStat->errorInfo();
+        if ($errorInfo[1]) {
+            $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
+            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+            die;
+        }
+
+        if ($pdoStat->rowCount() == 0) {
             $_SESSION['error'] = 'Книг не найдено';
             $books = [];
         } else {
-            $books = mysqli_fetch_all($result, MYSQLI_ASSOC);
+            $books = $pdoStat->fetchAll(\PDO::FETCH_ASSOC);
         }
 
         $this->resetFilters();
@@ -193,15 +205,22 @@ class Book extends Model
         $id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
         //проверка на существование id в записях базе данных
-        $sqlIsBook = "SELECT id FROM `books` WHERE `id` = '$id'";
-        $result = $this->mysql->query($sqlIsBook);
+        $sql = "SELECT id FROM `books` WHERE `id` = :id";
+        $pdoStat = $this->pdo->prepare($sql);
+        $pdoStat->execute(compact('id'));
 
-        if ($result->num_rows == 0) {
+        $errorInfo = $pdoStat->errorInfo();
+        if ($errorInfo[1]) {
+            $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
+            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+            die;
+        }
+
+        if ($pdoStat->rowCount() == 0) {
             $_SESSION['error'] = "Книга не найдена";
             header("Location: /books/index");
             die;
         }
-
         return $id;
     }
 
@@ -215,11 +234,19 @@ class Book extends Model
         JOIN books ON (books.id = book_author.book_id)
         JOIN authors ON (authors.id = book_author.author_id)
         JOIN genres ON (books.genre_id = genres.id)
-        WHERE books.id = '$id'";
+        WHERE books.id = :id";
 
-        $result = $this->mysql->query($sql);
-        $books = mysqli_fetch_all($result, MYSQLI_ASSOC);
-        $book = $books[0];
+        $pdoStat = $this->pdo->prepare($sql);
+        $pdoStat->execute(compact('id'));
+
+        $errorInfo = $pdoStat->errorInfo();
+        if ($errorInfo[1]) {
+            $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
+            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+            die;
+        }
+
+        $book = $pdoStat->fetch(\PDO::FETCH_ASSOC);
 
         return $book;
     }
@@ -234,15 +261,23 @@ class Book extends Model
         }
         // валидация на уникальность
         $idQuery = ($id) ? " AND `id`<>$id" : "";
-        $sqlUniqBook = "SELECT `id` FROM `books` WHERE `title` = '$title' $idQuery";
-        $result = $this->mysql->query($sqlUniqBook);
-        if ($result->num_rows > 0) {
+        $sql = "SELECT `id` FROM `books` WHERE `title` = :title $idQuery";
+        $pdoStat = $this->pdo->prepare($sql);
+        $pdoStat->execute(compact('title'));
+
+        $errorInfo = $pdoStat->errorInfo();
+        if ($errorInfo[1]) {
+            $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
+            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+            die;
+        }
+
+        if ($pdoStat->rowCount() > 0) {
             $_SESSION['error'] = 'ошибка ввода - уже есть такое название книги';
             header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
             die;
         }
-        // экранирование запроса от спец символов
-        return $this->mysql->real_escape_string($title);
+        return $title;
     }
 
     function validateYear($year)
@@ -253,7 +288,6 @@ class Book extends Model
             header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
             die;
         }
-
         return $year;
     }
 
@@ -267,14 +301,13 @@ class Book extends Model
             unset($_POST['reset_filter']);
             header('Refresh:0');
             die;
-            
         }
     }
     public function addBook()
     {
         if (isset($_POST['submit'])) {
-            $title = $_SESSION['title'] = isset($_POST['title']) ? $_POST['title'] : null;
-            $authors_id = $_SESSION['authors_id'] = isset($_POST['authors_id']) ? $_POST['authors_id'] : null;
+            $title = $_SESSION['title'] = isset($_POST['title']) ? (string) $_POST['title'] : null;
+            $authors_id = $_SESSION['authors_id'] = isset($_POST['authors_id']) ? (array) $_POST['authors_id'] : null;
             $genre_id = $_SESSION['genre_id'] = isset($_POST['genre_id']) ? (int) $_POST['genre_id'] : null;
             $year = $_SESSION['year'] = isset($_POST['year']) ? (int) $_POST['year'] : null;
 
@@ -283,46 +316,51 @@ class Book extends Model
             $year = $this->validateYear($year);
 
             // добавляем книгу
-            $sqlBook = "INSERT INTO books (`title`, `genre_id`, `year`) VALUES ('$title', '$genre_id' , '$year')";
-            $this->mysql->query($sqlBook);
+            $sqlBook = "INSERT INTO books (`title`, `genre_id`, `year`) VALUES (:title, :genre_id , :year)";
+            $pdoStat = $this->pdo->prepare($sqlBook);
+            $pdoStat->execute(compact('title', 'genre_id', 'year'));
+            // проверяем ошибки 
+            $errorInfo = $pdoStat->errorInfo();
+            if ($errorInfo[1]) {
+                $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
+                header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+                die;
+            }
+            // получаем последний id в таблице книги
+            $lastId = $this->pdo->lastInsertId();
 
-            // проверяем ошибки и получаем последний id в таблице книги
-            if (!empty($this->mysql->errno)) {
-                $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
-            } else {
-                $lastId = $this->mysql->insert_id;
+            // заносим в связующую таблицу последний id книги и id каждого автора из формы
+            foreach ($authors_id as $author_id) {
+                $sqlBookAuthor = "INSERT INTO book_author (`book_id`, `author_id`) VALUES (:lastId, :author_id)";
+                $pdoStatA = $this->pdo->prepare($sqlBookAuthor);
+                $pdoStatA->execute(compact('lastId', 'author_id'));
 
-                // заносим в связующую таблицу последний id книги и id каждого автора из формы
-                foreach ($authors_id as $author_id) {
-                    $sqlBookAuthor = "INSERT INTO book_author (`book_id`, `author_id`) VALUES ('$lastId', '$author_id')";
-                    $this->mysql->query($sqlBookAuthor);
-                }
-
-                // проверяем на ошибку и сообщаем успешность
-                if (!empty($this->mysql->errno)) {
-                    $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
-                } else {
-                    $_SESSION['message'] = "Запись [#$lastId] успешно добавлена в базу данных!";
-                    unset($_SESSION['title']);
-                    unset($_SESSION['authors_id']);
-                    unset($_SESSION['genre_id']);
-                    unset($_SESSION['year']);
+                $errorInfoA = $pdoStatA->errorInfo();
+                if ($errorInfoA[1]) {
+                    $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfoA[1] . ' - ' . $errorInfoA[2];
                     header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
                     die;
                 }
             }
+
+            $_SESSION['message'] = "Запись [#$lastId] успешно добавлена в базу данных!";
+            unset($_SESSION['title']);
+            unset($_SESSION['authors_id']);
+            unset($_SESSION['genre_id']);
+            unset($_SESSION['year']);
+            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+            die;
         }
         $this->resetFormData();
     }
 
-    public function updateBook()
+    public function updateBook($id)
     {
         if (isset($_POST['submit'])) {
-            $id = $this->getIdFromUrl();
 
-            $title = isset($_POST['title']) ? $_POST['title'] : null;
+            $title = isset($_POST['title']) ? (string) $_POST['title'] : null;
+            $authors_id = isset($_POST['authors_id']) ? (array) $_POST['authors_id'] : null;
             $genre_id = isset($_POST['genre_id']) ? (int) $_POST['genre_id'] : null;
-            $authors_id = isset($_POST['authors_id']) ? $_POST['authors_id'] : null;
             $year = isset($_POST['year']) ? (int) $_POST['year'] : null;
 
             // валидация
@@ -330,48 +368,64 @@ class Book extends Model
             $year = $this->validateYear($year);
 
             // обновляем книгу
-            $sqlBook = "UPDATE books SET `title`='$title', `genre_id`='$genre_id', `year`='$year' WHERE `id`='$id'";
-            $this->mysql->query($sqlBook);
-
+            $sqlBook = "UPDATE books SET `title`=:title, `genre_id`=:genre_id, `year`=:year WHERE `id`=:id";
+            $pdoStat = $this->pdo->prepare($sqlBook);
+            $pdoStat->execute(compact('title', 'genre_id', 'year', 'id'));
             // проверяем ошибки 
-            if (!empty($this->mysql->errno)) {
-                $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
-            } else {
+            $errorInfo = $pdoStat->errorInfo();
+            if ($errorInfo[1]) {
+                $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
+                header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+                die;
+            }
 
-                // удаляем в связующей таблице записи по id книги и добавляем новые записи id каждого автора из формы
-                $delSql = "DELETE FROM book_author WHERE `book_id`= '$id'";
-                $this->mysql->query($delSql);
-                foreach ($authors_id as $author_id) {
-                    $sqlBookAuthor = "INSERT INTO book_author (`book_id`, `author_id`) VALUES ('$id', '$author_id')";
-                    $this->mysql->query($sqlBookAuthor);
-                }
+            // удаляем в связующей таблице записи по id книги и добавляем новые записи id каждого автора из формы
+            $delSql = "DELETE FROM book_author WHERE `book_id`= :id";
+            $pdoStat = $this->pdo->prepare($delSql);
+            $pdoStat->execute(compact('id'));
+            // проверяем ошибки 
+            $errorInfo = $pdoStat->errorInfo();
+            if ($errorInfo[1]) {
+                $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
+                header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+                die;
+            }
+            foreach ($authors_id as $author_id) {
+                $sqlBookAuthor = "INSERT INTO book_author (`book_id`, `author_id`) VALUES (:id, :author_id)";
+                $pdoStatA = $this->pdo->prepare($sqlBookAuthor);
+                $pdoStatA->execute(compact('id', 'author_id'));
 
-                // проверяем на ошибку и сообщаем успешность
-                if (!empty($this->mysql->errno)) {
-                    $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
-                } else {
-                    $_SESSION['message'] = "Запись [#$id] успешно изменена!";
+                $errorInfoA = $pdoStatA->errorInfo();
+                if ($errorInfoA[1]) {
+                    $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfoA[1] . ' - ' . $errorInfoA[2];
                     header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
                     die;
                 }
             }
+            $_SESSION['message'] = "Запись [#$id] успешно изменена!";
+            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+            die;
         };
     }
-    public function deleteBook()
+    public function deleteBook($id)
     {
         if (isset($_POST['submit'])) {
-            $id = $this->getIdFromUrl();
 
             // удаление книги и сообщение об успешности или ошибке
-            $delSql = "DELETE FROM books WHERE `id`= '$id'";
-            $this->mysql->query($delSql);
-            if (!empty($this->mysql->errno)) {
-                $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
-            } else {
-                $_SESSION['message'] = "Запись [#$id] успешно удалена!";
-                header("Location: /books/index", true, 303);
+            $delSql = "DELETE FROM books WHERE `id`= :id";
+            $pdoStat = $this->pdo->prepare($delSql);
+            $pdoStat->execute(compact('id'));
+
+            $errorInfo = $pdoStat->errorInfo();
+            if ($errorInfo[1]) {
+                $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
+                header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
                 die;
             }
+
+            $_SESSION['message'] = "Запись [#$id] успешно удалена!";
+            header("Location: /books/index", true, 303);
+            die;
         }
     }
 
@@ -382,11 +436,11 @@ class Book extends Model
         JOIN books ON (books.id = book_author.book_id)
         JOIN authors ON (authors.id = book_author.author_id)
         JOIN genres ON (books.genre_id = genres.id)
-        WHERE authors.id = '$authorId'";
+        WHERE authors.id = :authorId";
+        $pdoStat = $this->pdo->prepare($sql);
+        $pdoStat->execute(compact('authorId'));
 
-        $result = $this->mysql->query($sql);
-
-        $books = mysqli_fetch_all($result, MYSQLI_ASSOC);
+        $books = $pdoStat->fetchAll(\PDO::FETCH_ASSOC);
 
         return $books;
     }
