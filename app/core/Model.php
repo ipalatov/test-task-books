@@ -16,7 +16,7 @@ abstract class Model
     static function DBConnect()
     {
         $mysql = new mysqli();
-        $ini = parse_ini_file('./app/core/config.ini');
+        $ini = parse_ini_file('./app/config.ini');
 
         $mysql->connect($ini['db_host'], $ini['db_user'], $ini['db_password'], $ini['db_name']);
         if ($mysql->connect_errno) {
