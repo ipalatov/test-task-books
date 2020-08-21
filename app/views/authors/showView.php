@@ -8,32 +8,40 @@
 
 
     <table>
-        <tr>
-            <td>
-                <span>Название</span>
-            </td>
-            <td>
-                <span>Жанр</span>
-            </td>
-
-            <td>
-                <span>Год издания</span>
-            </td>
-        </tr>
-
-        <?php foreach ($books as $book) : ?>
+        <thead>
             <tr>
-                <td>
-                    <a href="<?= $ini['app_root'] . "books/show?id={$book['id']}" ?>"><?= htmlspecialchars($book['title']) ?></a>
-                </td>
-                <td>
-                    <span><?= $book['genre'] ?></span>
-                </td>
-                <td>
-                    <span><?= $book['year'] ?></span>
-                </td>
+                <th>
+                    <span>#</span>
+                </th>
+                <th>
+                    <span>Название</span>
+                </th>
+                <th>
+                    <span>Жанр</span>
+                </th>
+                <th>
+                    <span>Год издания</span>
+                </th>
             </tr>
-        <?php endforeach; ?>
+        </thead>
+        <tbody>
+            <?php foreach ($books as $key => $book) : ?>
+                <tr>
+                    <td><?= $key + 1  ?></td>
+                    <td>
+                        <a href="<?= $ini['app_root'] . "books/show?id={$book['id']}" ?>"><?= htmlspecialchars($book['title']) ?></a>
+                    </td>
+                    <td>
+                        <span><?= $book['genre'] ?></span>
+                    </td>
+                    <td>
+                        <span><?= $book['year'] ?></span>
+                    </td>
+                </tr>
+            <?php endforeach; ?>
+        </tbody>
+
+
     </table>
 
 </div>
