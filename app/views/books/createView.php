@@ -24,6 +24,6 @@
         <label for="year">Год издания</label>
         <input id="year" type="number" name="year" value="<?= $_SESSION['year'] ?? null ?>"><br>
 
-        <p><input type="submit" name="submit" value="Добавить"></p>
+        <p><input type="submit" name="submit" value="Добавить"><input type="submit" name="reset" value="Сбросить"></p>
     </form>
 </div>

@@ -1,5 +1,9 @@
 <h1>Редактирование книги</h1>
 
+<?php
+$book['author'] = explode(', ', $book['author']);
+?>
+
 <div style="padding: 20px;">
     <form method="POST" action="">
         <label for="title">Название книги</label>
@@ -18,9 +22,6 @@
             <input type="radio" <?= ($genre['name'] == $book['genre']) ? 'checked' : '' ?> id="genre_id" name="genre_id" value="<?= $genre['id'] ?>"><?= $genre['name']  ?><br>
         <?php endforeach; ?>
 
-        <?php
-        $book['author'] = explode(', ', $book['author']);
-        ?>
 
         <label for="year">Год издания</label>
         <input id="year" type="number" name="year" value="<?= $book['year'] ?>"><br>

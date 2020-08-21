@@ -99,8 +99,9 @@ class Book extends Model
             unset($_SESSION['genreFilter']);
             unset($_SESSION['startYearFilter']);
             unset($_SESSION['endYearFilter']);
-            header('Refresh:0');
             unset($_POST['reset_filter']);
+            header('Refresh:0');
+            die;
         }
     }
 
@@ -223,7 +224,7 @@ class Book extends Model
         return $book;
     }
 
-    function validateTitle($title, $repNum = 0)
+    function validateTitle($title, $id = null)
     {
         // валидация на длину многобайтовой строки
         if (mb_strlen($title) > 250) {
@@ -232,9 +233,10 @@ class Book extends Model
             die;
         }
         // валидация на уникальность
-        $sqlUniqBook = "SELECT id FROM books WHERE title = '$title'";
+        $idQuery = ($id) ? " AND `id`<>$id" : "";
+        $sqlUniqBook = "SELECT `id` FROM `books` WHERE `title` = '$title' $idQuery";
         $result = $this->mysql->query($sqlUniqBook);
-        if ($result->num_rows > $repNum) {
+        if ($result->num_rows > 0) {
             $_SESSION['error'] = 'ошибка ввода - уже есть такое название книги';
             header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
             die;
@@ -255,6 +257,19 @@ class Book extends Model
         return $year;
     }
 
+    public function resetFormData() // сброс фильтров из сессии
+    {
+        if (isset($_POST['reset'])) {
+            unset($_SESSION['title']);
+            unset($_SESSION['authors_id']);
+            unset($_SESSION['genre_id']);
+            unset($_SESSION['year']);
+            unset($_POST['reset_filter']);
+            header('Refresh:0');
+            die;
+            
+        }
+    }
     public function addBook()
     {
         if (isset($_POST['submit'])) {
@@ -297,6 +312,7 @@ class Book extends Model
                 }
             }
         }
+        $this->resetFormData();
     }
 
     public function updateBook()
@@ -310,7 +326,7 @@ class Book extends Model
             $year = isset($_POST['year']) ? (int) $_POST['year'] : null;
 
             // валидация
-            $title = $this->validateTitle($title, 1);
+            $title = $this->validateTitle($title, $id);
             $year = $this->validateYear($year);
 
             // обновляем книгу
