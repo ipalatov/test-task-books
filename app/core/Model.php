@@ -8,17 +8,28 @@ abstract class Model
 {
     public $mysql;
 
+    static $db_host;
+    static $db_user;
+    static $db_password;
+    static $db_name;
+
     protected function __construct()
     {
+        $ini = parse_ini_file('./app/config.ini');
+        extract($ini);
+        static::$db_host = $db_host;
+        static::$db_user = $db_user;
+        static::$db_password = $db_password;
+        static::$db_name = $db_name;
+
         $this->mysql = static::DBConnect();
     }
 
     static function DBConnect()
     {
         $mysql = new mysqli();
-        $ini = parse_ini_file('./app/config.ini');
 
-        $mysql->connect($ini['db_host'], $ini['db_user'], $ini['db_password'], $ini['db_name']);
+        $mysql->connect(static::$db_host, static::$db_user, static::$db_password, static::$db_name);
         if ($mysql->connect_errno) {
             echo 'Ошибка подключения к базе данных (' . $mysql->connect_errno . '): ' . $mysql->connect_error;
             exit();

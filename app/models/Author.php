@@ -32,8 +32,6 @@ class Author extends Model
         return self::$authorInstances[$cls];
     }
 
-
-
     public function getIndex()
     {
         $sql = "SELECT `id`, `name`, (select count(*) from `book_author` where `author_id`=`authors`.id) as
@@ -56,20 +54,17 @@ class Author extends Model
         $sqlIsAuth = "SELECT id FROM `authors` WHERE `id` = '$id'";
         $result = $this->mysql->query($sqlIsAuth);
 
-        if ($result->num_rows > 0) {
-            return $id;
+        if ($result->num_rows == 0) {
+            $_SESSION['error'] = 'Автор не найден';
+            header("Location: /authors/index");
+            die;
         }
-
-        return null;
+        return $id;
     }
 
     public function getOne()
     {
         $id = $this->getIdFromUrl();
-        if (empty($id)) {
-            echo 'Автор не найден';
-            die;
-        }
 
         // запрос на одного автора
         $sql = "SELECT `id`, `name` FROM `authors`
@@ -88,7 +83,8 @@ class Author extends Model
         $sqlUniqAuthor = "SELECT `id` FROM `authors` WHERE `name` = '$name'";
         $result = $this->mysql->query($sqlUniqAuthor);
         if ($result->num_rows > $repNum) {
-            echo 'ошибка ввода - уже есть такой автор';
+            $_SESSION['error'] = 'ошибка ввода - уже есть такой автор';
+            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
             die;
         }
         // экранирование запроса от спец символов
@@ -98,7 +94,7 @@ class Author extends Model
     public function addAuthor()
     {
         if (isset($_POST['submit'])) {
-            $name = isset($_POST['name']) ? $_POST['name'] : null;
+            $name = $_SESSION['name'] = isset($_POST['name']) ? $_POST['name'] : null;
 
             // валидация
             $name = $this->validateName($name);
@@ -109,9 +105,13 @@ class Author extends Model
 
             // проверяем ошибки
             if (!empty($this->mysql->errno)) {
-                echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+                $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
             } else {
-                echo 'Запись успешно добавлена в базу данных!';
+                $lastId = $this->mysql->insert_id;
+                $_SESSION['message'] = "Запись [#$lastId ] добавлена в базу данных!";
+                unset($_SESSION['name']);
+                header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+                die;
             }
         };
     }
@@ -120,10 +120,6 @@ class Author extends Model
     {
         if (isset($_POST['submit'])) {
             $id = $this->getIdFromUrl();
-            if (empty($id)) {
-                echo 'Автор не найден';
-                die;
-            }
 
             $name = isset($_POST['name']) ? $_POST['name'] : null;
 
@@ -136,28 +132,29 @@ class Author extends Model
 
             // проверяем ошибки
             if (!empty($this->mysql->errno)) {
-                echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+                $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
             } else {
-                echo 'Запись успешно изменена!';
-                header("Refresh:0");
+                $_SESSION['message'] = "Запись [#$id ] успешно изменена!";
+                header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+                die;
             }
         }
     }
+
     public function deleteAuthor()
     {
         if (isset($_POST['submit'])) {
             $id = $this->getIdFromUrl();
-            if (empty($id)) {
-                echo 'Автор не найден';
-                die;
-            }
+
             // запрос на удаление автора
             $delSql = "DELETE FROM authors WHERE `id`= '$id'";
             $this->mysql->query($delSql);
             if (!empty($this->mysql->errno)) {
-                echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+                $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
             } else {
-                echo 'Запись успешно удалена!';
+                $_SESSION['message'] = "Запись [#$id ] успешно удалена!";
+                header("Location: /authors/index", true, 303);
+                die;
             }
         };
     }

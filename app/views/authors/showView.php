@@ -29,7 +29,7 @@
                 <tr>
                     <td><?= $key + 1  ?></td>
                     <td>
-                        <a href="<?= $ini['app_root'] . "books/show?id={$book['id']}" ?>"><?= htmlspecialchars($book['title']) ?></a>
+                        <a href="<?= $app_root . "books/show?id={$book['id']}" ?>"><?= htmlspecialchars($book['title']) ?></a>
                     </td>
                     <td>
                         <span><?= $book['genre'] ?></span>

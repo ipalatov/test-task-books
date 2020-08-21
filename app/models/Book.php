@@ -36,46 +36,69 @@ class Book extends Model
 
     static function getQueryAuthors() //получение фильтров, запись их в сессию, составление переменных для запроса
     {
-        if (isset($_POST['author'])) {
-            $_SESSION['author'] = $_POST['author'];
+        if (isset($_POST['authorFilter'])) {
+            $_SESSION['authorFilter'] = $_POST['authorFilter'];
+            $filterAuthors = implode(", ", $_SESSION['authorFilter']);
+        } else {
+            $filterAuthors = 0;
+            unset($_SESSION['authorFilter']);
         }
-        $filterAuthors = isset($_SESSION['author']) ? implode(", ", $_SESSION['author']) : 0;
         $queryAuthors = $filterAuthors > 0 ? " AND authors.id IN ($filterAuthors)" : "";
         return $queryAuthors;
     }
 
     static function getQueryGenres()
     {
-        if (isset($_POST['genre'])) {
-            $_SESSION['genre'] = $_POST['genre'];
+        if (isset($_POST['genreFilter'])) {
+            $_SESSION['genreFilter'] = $_POST['genreFilter'];
+            $filterGenres = implode(", ", $_SESSION['genreFilter']);
+        } else {
+            $filterGenres = 0;
+            unset($_SESSION['genreFilter']);
         }
-        $filterGenres = isset($_SESSION['genre']) ? implode(", ", $_SESSION['genre']) : 0;
+
         $queryGenres = $filterGenres > 0 ? " AND genre_id IN ($filterGenres)" : "";
         return $queryGenres;
     }
 
     static function getQueryYears()
     {
-        if (isset($_POST['startYear'])) {
-            $_SESSION['startYear'] = $_POST['startYear'];
+        if (isset($_POST['startYearFilter']) && $_POST['startYearFilter'] > 0) {
+            $_SESSION['startYearFilter'] = $_POST['startYearFilter'];
+            $startYear = (int) $_SESSION['startYearFilter'];
+        } else {
+            $startYear = 0;
+            unset($_SESSION['startYearFilter']);
         }
 
-        if (isset($_POST['endYear'])) {
-            $_SESSION['endYear'] = $_POST['endYear'];
+        if (isset($_POST['endYearFilter'])) {
+            $_SESSION['endYearFilter'] = $_POST['endYearFilter'];
+            $endYear = (int) $_SESSION['endYearFilter'];
+        } else {
+            $endYear = 0;
+            unset($_SESSION['endYearFilter']);
         }
-        $startYear = isset($_SESSION['startYear']) ? (int) $_SESSION['startYear'] : 0;
-        $endYear = isset($_SESSION['endYear']) ? (int) $_SESSION['endYear'] : 0;
-        $queryYears = ($endYear > 0) && ($endYear >= 0) ? " AND year BETWEEN $startYear AND $endYear" : "";
+
+        if ($startYear > 0 && $endYear > 0) {
+            $queryYears = " AND `year` BETWEEN $startYear AND $endYear";
+        } elseif ($startYear == 0 && $endYear > 0) {
+            $queryYears = " AND `year` <= $endYear";
+        } elseif ($startYear > 0 && $endYear == 0) {
+            $queryYears = " AND `year` >= $startYear";
+        } else {
+            $queryYears = "";
+        }
+
         return $queryYears;
     }
 
     public function resetFilters() // сброс фильтров из сессии
     {
         if (isset($_POST['reset_filter'])) {
-            unset($_SESSION['author']);
-            unset($_SESSION['genre']);
-            unset($_SESSION['startYear']);
-            unset($_SESSION['endYear']);
+            unset($_SESSION['authorFilter']);
+            unset($_SESSION['genreFilter']);
+            unset($_SESSION['startYearFilter']);
+            unset($_SESSION['endYearFilter']);
             header('Refresh:0');
             unset($_POST['reset_filter']);
         }
@@ -84,7 +107,6 @@ class Book extends Model
     // получение общего количества записей по условиям фильтра
     public function getTotal()
     {
-        session_start();
         // переменные для запроса по условиям фильтра
         $queryAuthors = static::getQueryAuthors();
         $queryGenres = static::getQueryGenres();
@@ -153,7 +175,7 @@ class Book extends Model
 
         $result = $this->mysql->query($sql);
         if (!$result) {
-            echo 'Книг не найдено';
+            $_SESSION['error'] = 'Книг не найдено';
             $books = [];
         } else {
             $books = mysqli_fetch_all($result, MYSQLI_ASSOC);
@@ -173,20 +195,18 @@ class Book extends Model
         $sqlIsBook = "SELECT id FROM `books` WHERE `id` = '$id'";
         $result = $this->mysql->query($sqlIsBook);
 
-        if ($result->num_rows > 0) {
-            return $id;
+        if ($result->num_rows == 0) {
+            $_SESSION['error'] = "Книга не найдена";
+            header("Location: /books/index");
+            die;
         }
 
-        return null;
+        return $id;
     }
 
     public function getOne()
     {
         $id = $this->getIdFromUrl();
-        if (empty($id)) {
-            echo 'Книга не найдена';
-            die;
-        }
 
         // запрос на одну книгу с конкатенацией по столбцу authors.name
         $sql = "SELECT books.id, books.title, genres.name as genre, books.year, GROUP_CONCAT(authors.name SEPARATOR ', ')
@@ -207,14 +227,16 @@ class Book extends Model
     {
         // валидация на длину многобайтовой строки
         if (mb_strlen($title) > 250) {
-            echo 'ошибка ввода - название книги содержит более 250 символов';
+            $_SESSION['error'] = 'ошибка ввода - название книги содержит более 250 символов';
+            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
             die;
         }
         // валидация на уникальность
         $sqlUniqBook = "SELECT id FROM books WHERE title = '$title'";
         $result = $this->mysql->query($sqlUniqBook);
         if ($result->num_rows > $repNum) {
-            echo 'ошибка ввода - уже есть такое название книги';
+            $_SESSION['error'] = 'ошибка ввода - уже есть такое название книги';
+            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
             die;
         }
         // экранирование запроса от спец символов
@@ -225,7 +247,8 @@ class Book extends Model
     {
         // валидация на год издания, д.б. не больше текущего
         if ($year > date('Y')) {
-            echo 'ошибка ввода - год издания больше текущего';
+            $_SESSION['error'] = 'ошибка ввода - год издания больше текущего';
+            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
             die;
         }
 
@@ -235,10 +258,10 @@ class Book extends Model
     public function addBook()
     {
         if (isset($_POST['submit'])) {
-            $title = isset($_POST['title']) ? $_POST['title'] : null;
-            $genre_id = isset($_POST['genre_id']) ? (int) $_POST['genre_id'] : null;
-            $authors_id = isset($_POST['authors_id']) ? $_POST['authors_id'] : null;
-            $year = isset($_POST['year']) ? (int) $_POST['year'] : null;
+            $title = $_SESSION['title'] = isset($_POST['title']) ? $_POST['title'] : null;
+            $authors_id = $_SESSION['authors_id'] = isset($_POST['authors_id']) ? $_POST['authors_id'] : null;
+            $genre_id = $_SESSION['genre_id'] = isset($_POST['genre_id']) ? (int) $_POST['genre_id'] : null;
+            $year = $_SESSION['year'] = isset($_POST['year']) ? (int) $_POST['year'] : null;
 
             // валидация
             $title = $this->validateTitle($title);
@@ -250,7 +273,7 @@ class Book extends Model
 
             // проверяем ошибки и получаем последний id в таблице книги
             if (!empty($this->mysql->errno)) {
-                echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+                $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
             } else {
                 $lastId = $this->mysql->insert_id;
 
@@ -262,9 +285,15 @@ class Book extends Model
 
                 // проверяем на ошибку и сообщаем успешность
                 if (!empty($this->mysql->errno)) {
-                    echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+                    $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
                 } else {
-                    echo 'Запись успешно добавлена в базу данных!';
+                    $_SESSION['message'] = "Запись [#$lastId] успешно добавлена в базу данных!";
+                    unset($_SESSION['title']);
+                    unset($_SESSION['authors_id']);
+                    unset($_SESSION['genre_id']);
+                    unset($_SESSION['year']);
+                    header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+                    die;
                 }
             }
         }
@@ -274,10 +303,6 @@ class Book extends Model
     {
         if (isset($_POST['submit'])) {
             $id = $this->getIdFromUrl();
-            if (empty($id)) {
-                echo 'Книга не найдена';
-                die;
-            }
 
             $title = isset($_POST['title']) ? $_POST['title'] : null;
             $genre_id = isset($_POST['genre_id']) ? (int) $_POST['genre_id'] : null;
@@ -294,7 +319,7 @@ class Book extends Model
 
             // проверяем ошибки 
             if (!empty($this->mysql->errno)) {
-                echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+                $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
             } else {
 
                 // удаляем в связующей таблице записи по id книги и добавляем новые записи id каждого автора из формы
@@ -307,10 +332,11 @@ class Book extends Model
 
                 // проверяем на ошибку и сообщаем успешность
                 if (!empty($this->mysql->errno)) {
-                    echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+                    $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
                 } else {
-                    echo 'Запись успешно изменена!';
-                    header("Refresh:0");
+                    $_SESSION['message'] = "Запись [#$id] успешно изменена!";
+                    header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+                    die;
                 }
             }
         };
@@ -319,27 +345,22 @@ class Book extends Model
     {
         if (isset($_POST['submit'])) {
             $id = $this->getIdFromUrl();
-            if (empty($id)) {
-                echo 'Книга не найдена';
-                die;
-            }
+
             // удаление книги и сообщение об успешности или ошибке
             $delSql = "DELETE FROM books WHERE `id`= '$id'";
             $this->mysql->query($delSql);
             if (!empty($this->mysql->errno)) {
-                echo 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
+                $_SESSION['error'] = 'ошибка' . ' ' . $this->mysql->errno . ': ' . $this->mysql->error;
             } else {
-                echo 'Запись успешно удалена!';
+                $_SESSION['message'] = "Запись [#$id] успешно удалена!";
+                header("Location: /books/index", true, 303);
+                die;
             }
         }
     }
 
     public function getBooksByAuthor($authorId)
     {
-        if (empty($authorId)) {
-            echo 'Автор не найден';
-            die;
-        }
         // получение списка книг по id автора
         $sql = "SELECT books.id, books.title, genres.name as genre, books.year FROM book_author
         JOIN books ON (books.id = book_author.book_id)

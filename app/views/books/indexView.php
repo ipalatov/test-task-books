@@ -37,7 +37,7 @@
                         <tr>
                             <td><?= ($pagination->currentPage - 1) * 10 + $key + 1  ?></td>
                             <td>
-                                <a href="<?= $ini['app_root'] . "books/show?id={$book['id']}" ?>"><?= htmlspecialchars($book['title']) ?></a>
+                                <a href="<?= $app_root . "books/show?id={$book['id']}" ?>"><?= htmlspecialchars($book['title']) ?></a>
                             </td>
                             <td>
                                 <span><?= $book['genre'] ?></span>
@@ -62,29 +62,29 @@
             <p>по автору</p>
             <p>
                 <?php foreach ($authors as $author) : ?>
-                    <input type="checkbox" name="author[]" value="<?= $author['id'] ?>" <?php if (isset($_SESSION['author'])) {
-                                                                                            foreach ($_SESSION['author'] as $sessAuthor) {
-                                                                                                if ($sessAuthor == $author['id']) echo 'checked';
-                                                                                            }
-                                                                                        }
-                                                                                        ?>><?= htmlspecialchars($author['name']) ?><Br>
+                    <input type="checkbox" name="authorFilter[]" value="<?= $author['id'] ?>" <?php if (isset($_SESSION['authorFilter'])) {
+                                                                                                    foreach ($_SESSION['authorFilter'] as $sessAuthor) {
+                                                                                                        if ($sessAuthor == $author['id']) echo 'checked';
+                                                                                                    }
+                                                                                                }
+                                                                                                ?>><?= htmlspecialchars($author['name']) ?><Br>
                 <?php endforeach; ?>
             </p>
             <p>по жанру</p>
             <p>
                 <?php foreach ($genres as $genre) : ?>
-                    <input type="checkbox" name="genre[]" value="<?= $genre['id'] ?>" <?php if (isset($_SESSION['genre'])) {
-                                                                                            foreach ($_SESSION['genre'] as $sessGenre) {
-                                                                                                if ($sessGenre == $genre['id']) echo 'checked';
+                    <input type="checkbox" name="genreFilter[]" value="<?= $genre['id'] ?>" <?php if (isset($_SESSION['genreFilter'])) {
+                                                                                                foreach ($_SESSION['genreFilter'] as $sessGenre) {
+                                                                                                    if ($sessGenre == $genre['id']) echo 'checked';
+                                                                                                }
                                                                                             }
-                                                                                        }
-                                                                                        ?>><?= $genre['name'] ?><Br>
+                                                                                            ?>><?= $genre['name'] ?><Br>
                 <?php endforeach; ?>
             </p>
             <p>по году</p>
             <p>
-                <span>c</span><input type="number" name="startYear" value="<?= isset($_SESSION['startYear']) ?  $_SESSION['startYear'] : 0; ?>"><Br>
-                <span>по</span><input type="number" name="endYear" value="<?= isset($_SESSION['endYear']) ?  $_SESSION['endYear'] : 0; ?>"><Br>
+                <span>c</span><input type="number" name="startYearFilter" value="<?= isset($_SESSION['startYearFilter']) ?  $_SESSION['startYearFilter'] : 0; ?>"><Br>
+                <span>по</span><input type="number" name="endYearFilter" value="<?= isset($_SESSION['endYearFilter']) ?  $_SESSION['endYearFilter'] : 0; ?>"><Br>
 
             </p>
             <p><input type="submit" value="Применить"> <input type="submit" name="reset_filter" value="Сбросить фильтры"></p>

@@ -33,6 +33,6 @@
 </div>
 
 <ul>
-    <li><a href="<?= $ini['app_root'] . '' ?>books/index">Список книг</a></li>
-    <li><a href="<?= $ini['app_root'] . '' ?>authors/index">Список авторов</a></li>
+    <li><a href="<?= $app_root ?>books/index">Список книг</a></li>
+    <li><a href="<?= $app_root ?>authors/index">Список авторов</a></li>
 </ul>

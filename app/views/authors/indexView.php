@@ -19,7 +19,7 @@
                 <tr>
                     <td><?= $key + 1 ?></td>
                     <td>
-                        <a href="<?= $ini['app_root'] . "authors/show?id={$author['id']}" ?>"><?= htmlspecialchars($author['name']) ?></a>
+                        <a href="<?= $app_root . "authors/show?id={$author['id']}" ?>"><?= htmlspecialchars($author['name']) ?></a>
                     </td>
                     <td>
                         <span><?= $author['bookNum'] ?> </span>
