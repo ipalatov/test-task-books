@@ -23,7 +23,7 @@ class Genre extends Model
         throw new \Exception("Cannot unserialize a singleton.");
     }
     // синглтон для создания не более одного эксземпляра модели
-    public static function getGenreInstance(): Genre
+    public static function getInstance(): Genre
     {
         $cls = static::class;
         if (!isset(self::$genreInstances[$cls])) {

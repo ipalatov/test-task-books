@@ -3,6 +3,7 @@
 namespace App\models;
 
 use App\core\Model;
+use App\core\Validator;
 
 class Author extends Model
 {
@@ -23,7 +24,7 @@ class Author extends Model
     }
 
     // синглтон для создания не более одного эксземпляра модели
-    public static function getAuthorInstance(): Author
+    public static function getInstance(): Author
     {
         $cls = static::class;
         if (!isset(self::$authorInstances[$cls])) {
@@ -93,28 +94,24 @@ class Author extends Model
         return $author;
     }
 
-    function validateName($name, $id = null)
+    function validateName(string $name, int $id = null)
     {
-        // валидация на уникальность автора
-        $idQuery = ($id) ? "AND `id`<> int $id"  : "";
-        $sqlUniqAuthor = "SELECT `id` FROM `authors` WHERE `name` = :name $idQuery";
-        $params = compact('name');
+        // валидация мин и макс длину строки
+        Validator::checkStringMin($name, 3);
+        Validator::checkStringMax($name, 100);
 
+        // валидация на уникальность 
+        d($id);
 
-        $pdoStat = $this->pdo->prepare($sqlUniqAuthor);
-        $pdoStat->execute($params);
-        if ($pdoStat->rowCount() > 0) {
-            $_SESSION['error'] = 'ошибка ввода - уже есть такой автор';
-            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
-            die;
-        }
+        Validator::checkUniqField('authors', 'name', $name, $id);
+
         return $name;
     }
 
     public function addAuthor()
     {
         if (isset($_POST['submit'])) {
-            $name = $_SESSION['name'] = isset($_POST['name']) ? $_POST['name'] : null;
+            $name = $_SESSION['name'] = isset($_POST['name']) ? (string) $_POST['name'] : null;
 
             // валидация
             $name = $this->validateName($name);
@@ -142,7 +139,7 @@ class Author extends Model
     {
         if (isset($_POST['submit'])) {
 
-            $name = isset($_POST['name']) ? $_POST['name'] : null;
+            $name = isset($_POST['name']) ? (string) $_POST['name'] : null;
 
             // валидация
             $name = $this->validateName($name, $id);

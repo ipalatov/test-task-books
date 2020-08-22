@@ -12,8 +12,8 @@ class AuthorsController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->modelAuthors = Author::getAuthorInstance();
-        $this->modelBooks = Book::getBookInstance();
+        $this->modelAuthors = Author::getInstance();
+        $this->modelBooks = Book::getInstance();
     }
 
     public function actionIndex()

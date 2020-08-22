@@ -3,6 +3,7 @@
 namespace App\models;
 
 use App\core\Model;
+use App\core\Validator;
 use PDO;
 
 class Book extends Model
@@ -24,7 +25,7 @@ class Book extends Model
     }
 
     // синглтон для создания не более одного эксземпляра модели
-    public static function getBookInstance(): Book
+    public static function getInstance(): Book
     {
         $cls = static::class;
         if (!isset(self::$bookInstances[$cls])) {
@@ -251,43 +252,23 @@ class Book extends Model
         return $book;
     }
 
-    function validateTitle($title, $id = null)
+    function validateTitle($title, int $id = null)
     {
-        // валидация на длину многобайтовой строки
-        if (mb_strlen($title) > 250) {
-            $_SESSION['error'] = 'ошибка ввода - название книги содержит более 250 символов';
-            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
-            die;
-        }
-        // валидация на уникальность
-        $idQuery = ($id) ? " AND `id`<>$id" : "";
-        $sql = "SELECT `id` FROM `books` WHERE `title` = :title $idQuery";
-        $pdoStat = $this->pdo->prepare($sql);
-        $pdoStat->execute(compact('title'));
+        // валидация мин и макс длину строки
+        Validator::checkStringMin($title, 3);
+        Validator::checkStringMax($title, 250);
 
-        $errorInfo = $pdoStat->errorInfo();
-        if ($errorInfo[1]) {
-            $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
-            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
-            die;
-        }
+        // валидация на уникальность 
+        Validator::checkUniqField('books', 'title', $title, $id);
 
-        if ($pdoStat->rowCount() > 0) {
-            $_SESSION['error'] = 'ошибка ввода - уже есть такое название книги';
-            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
-            die;
-        }
         return $title;
     }
 
     function validateYear($year)
     {
         // валидация на год издания, д.б. не больше текущего
-        if ($year > date('Y')) {
-            $_SESSION['error'] = 'ошибка ввода - год издания больше текущего';
-            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
-            die;
-        }
+        Validator::checkCurrentYear($year);
+
         return $year;
     }
 

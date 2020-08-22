@@ -2,8 +2,6 @@
 
 namespace App\core;
 
-use mysqli;
-
 abstract class Model
 {
     public $pdo;
@@ -28,4 +26,5 @@ abstract class Model
 
         return $pdo;
     }
+    abstract static function getInstance();
 }

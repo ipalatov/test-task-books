@@ -28,6 +28,7 @@ class ComposerStaticInit81e1d009ed274a0f431095cc5f535e47
         'App\\core\\Model' => __DIR__ . '/../..' . '/app/core/Model.php',
         'App\\core\\Pagination' => __DIR__ . '/../..' . '/app/core/Pagination.php',
         'App\\core\\Route' => __DIR__ . '/../..' . '/app/core/Route.php',
+        'App\\core\\Validator' => __DIR__ . '/../..' . '/app/core/Validator.php',
         'App\\core\\View' => __DIR__ . '/../..' . '/app/core/View.php',
         'App\\models\\Author' => __DIR__ . '/../..' . '/app/models/Author.php',
         'App\\models\\Book' => __DIR__ . '/../..' . '/app/models/Book.php',

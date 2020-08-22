@@ -13,9 +13,9 @@ class BooksController extends Controller
     public function __construct()
     {
         parent::__construct();
-        $this->modelBooks = Book::getBookInstance();
-        $this->modelAuthors = Author::getAuthorInstance();
-        $this->modelGenres = Genre::getGenreInstance();
+        $this->modelBooks = Book::getInstance();
+        $this->modelAuthors = Author::getInstance();
+        $this->modelGenres = Genre::getInstance();
     }
     public function actionIndex()
     {

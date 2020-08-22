@@ -13,6 +13,7 @@ return array(
     'App\\core\\Model' => $baseDir . '/app/core/Model.php',
     'App\\core\\Pagination' => $baseDir . '/app/core/Pagination.php',
     'App\\core\\Route' => $baseDir . '/app/core/Route.php',
+    'App\\core\\Validator' => $baseDir . '/app/core/Validator.php',
     'App\\core\\View' => $baseDir . '/app/core/View.php',
     'App\\models\\Author' => $baseDir . '/app/models/Author.php',
     'App\\models\\Book' => $baseDir . '/app/models/Book.php',
