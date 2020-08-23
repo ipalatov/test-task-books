@@ -1,11 +1,14 @@
-<h1>Удаление автора</h1>
-<br>
+<h1 class="text-center">Удаление автора</h1>
 
-<div style="padding: 20px;">
-    <span> Удалить автора "<?= htmlspecialchars($author['name']) ?>" ? </span>
+<div style="min-height: 40vh;">
+    <h3 class="text-center"> Удалить автора "<?= htmlspecialchars($author['name']) ?>" ? </h3 class="text-center">
+
+    <form method="POST" action="">
+        <div class="text-center">
+            <input class="btn btn-primary" type="submit" name="submit" value="ДА"> <input class="btn btn-light" type="submit" name="noDelete" value="НЕТ">
+        </div>
+    </form>
 </div>
-<form method="POST" action="">
-    <p><input type="submit" name="submit" value="Удалить автора"></p>
-</form>
+
 
 <?php require 'app/views/layouts/authorNav.php' ?>

@@ -1,41 +1,41 @@
-<h1>Информация о авторе </h1>
+<h1 class="text-center">Информация о авторе </h1>
 
-<div style="padding: 20px;">
-    <span> <b><?= htmlspecialchars($author['name']) ?> </b></span>
+<div>
+    <h3><?= htmlspecialchars($author['name']) ?> </h3>
 </div>
-<div style="padding: 20px;">
-    <span> Все книги автора: </span>
+<div>
+    Все книги автора:
 
 
-    <table>
-        <thead>
+    <table class="table w-100">
+        <thead class="thead-dark">
             <tr>
-                <th>
-                    <span>#</span>
+                <th scope="col" class="align-middle">
+                    #
                 </th>
-                <th>
-                    <span>Название</span>
+                <th scope="col" class="align-middle">
+                    Название
                 </th>
-                <th>
-                    <span>Жанр</span>
+                <th scope="col" class="align-middle">
+                    Жанр
                 </th>
-                <th>
-                    <span>Год издания</span>
+                <th scope="col" class="align-middle">
+                    Год издания
                 </th>
             </tr>
         </thead>
         <tbody>
             <?php foreach ($books as $key => $book) : ?>
                 <tr>
-                    <td><?= $key + 1  ?></td>
+                    <th scope="row" style="width:50px"><?= $key + 1  ?></th>
                     <td>
                         <a href="<?= $app_root . "books/show?id={$book['id']}" ?>"><?= htmlspecialchars($book['title']) ?></a>
                     </td>
-                    <td>
-                        <span><?= $book['genre'] ?></span>
+                    <td style="width:140px">
+                        <?= $book['genre'] ?>
                     </td>
-                    <td>
-                        <span><?= $book['year'] ?></span>
+                    <td style="width:130px">
+                        <?= $book['year'] ?>
                     </td>
                 </tr>
             <?php endforeach; ?>

@@ -1,10 +1,12 @@
-<h1>Добавление нового автора</h1>
+<h1 class="text-center">Добавление нового автора</h1>
 
-<div style="padding: 20px;">
+<div>
     <form method="POST" action="">
-        <label for="name">Фамилия И.О. автора</label>
-        <input id="name" type="text" name="name" value="<?= $_SESSION['name'] ?? null ?>"><br>
-
-        <p><input type="submit" name="submit" value="Добавить"></p>
+        <div class="form-group">
+            <label for="name">Фамилия И.О. автора</label>
+            <input class="form-control w-50" id="name" type="text" name="name" aria-describedby="nameHelp" value="<?= $_SESSION['name'] ?? null ?>">
+            <small id="nameHelp" class="form-text text-muted">символов: мин - 3, макс - 100. Уникальность </small>
+        </div>
+        <input class="btn btn-primary" type="submit" name="submit" value="Добавить">
     </form>
 </div>
