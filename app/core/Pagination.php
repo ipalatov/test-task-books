@@ -53,35 +53,57 @@ class Pagination
         $page1right = null;
 
         if ($this->currentPage > 1) {
-            $back = "<a href='{$this->uri}page=" . ($this->currentPage - 1) . "'> < </a>";
+            $back = "<a class='btn btn-secondary' href='{$this->uri}page=" . ($this->currentPage - 1) . "'> < </a>";
         }
 
         if ($this->currentPage < $this->countPages) {
-            $forward = "<a href='{$this->uri}page=" . ($this->currentPage + 1) . "'> > </a>";
+            $forward = "<a class='btn btn-secondary' href='{$this->uri}page=" . ($this->currentPage + 1) . "'> > </a>";
         }
         if ($this->currentPage > 3) {
-            $startPage = "<a href='{$this->uri}page=1'> << </a>";
+            $startPage = "<a class='btn btn-secondary' href='{$this->uri}page=1'> << </a>";
         }
 
         if ($this->currentPage < ($this->countPages - 2)) {
-            $endPage = "<a href='{$this->uri}page={$this->countPages}'> >> </a>";
+            $endPage = "<a class='btn btn-secondary' href='{$this->uri}page={$this->countPages}'> >> </a>";
         }
 
         if ($this->currentPage - 2 > 0) {
-            $page2left = "<a href='{$this->uri}page=" . ($this->currentPage - 2) . "'> " . ($this->currentPage - 2) . " </a>";
+            $page2left = "<a class='btn btn-secondary' href='{$this->uri}page=" . ($this->currentPage - 2) . "'> " . ($this->currentPage - 2) . " </a>";
         }
         if ($this->currentPage - 1 > 0) {
-            $page1left = "<a href='{$this->uri}page=" . ($this->currentPage - 1) . "'> " . ($this->currentPage - 1) . " </a>";
+            $page1left = "<a class='btn btn-secondary' href='{$this->uri}page=" . ($this->currentPage - 1) . "'> " . ($this->currentPage - 1) . " </a>";
         }
 
         if ($this->currentPage + 2 <= $this->countPages) {
-            $page2right = "<a href='{$this->uri}page=" . ($this->currentPage + 2) . "'> " . ($this->currentPage + 2) . " </a>";
+            $page2right = "<a class='btn btn-secondary' href='{$this->uri}page=" . ($this->currentPage + 2) . "'> " . ($this->currentPage + 2) . " </a>";
         }
 
         if ($this->currentPage + 1 <= $this->countPages) {
-            $page1right = "<a href='{$this->uri}page=" . ($this->currentPage + 1) . "'> " . ($this->currentPage + 1) . " </a>";
+            $page1right = "<a class='btn btn-secondary' href='{$this->uri}page=" . ($this->currentPage + 1) . "'> " . ($this->currentPage + 1) . " </a>";
         }
-        return $startPage . $back . $page2left . $page1left . '<b>' . $this->currentPage . '</b>' . $page1right . $page2right . $forward . $endPage;
+        $this->currentPage = "<a class='btn btn-secondary' href='{$this->uri}page=" . $this->currentPage  . "'> " . $this->currentPage . " </a>";
+
+
+
+        $startPageHtml = '<li class="page-item">' . $startPage . '</li>';
+        $backHtml = '<li class="page-item">' . $back . '</li>';
+        $page2leftHtml = '<li class="page-item">' . $page2left . '</li>';
+        $page1leftHtml = '<li class="page-item">' . $page1left . '</li>';
+        $this->currentPageHtml = '<li class="page-item">' . $this->currentPage . '</li>';
+        $page1rightHtml = '<li class="page-item">' . $page1right . '</li>';
+        $page2rightHtml = '<li class="page-item">' . $page2right . '</li>';
+        $forwardHtml = '<li class="page-item">' . $forward . '</li>';
+        $endPageHtml = '<li class="page-item">' . $endPage . '</li>';
+
+        $paginationHtml = '
+        <nav aria-label="pagination">
+            <ul class="pagination">' .
+            $startPageHtml . $backHtml . $page2leftHtml . $page1leftHtml . $this->currentPageHtml . $page1rightHtml . $page2rightHtml
+            . $forwardHtml . $endPageHtml .
+            '</ul>
+        </nav>';
+
+        return $paginationHtml;
     }
 
     // сохранение других параметров запроса в строке(помимо номера страницы)

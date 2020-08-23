@@ -1,4 +1,4 @@
-<h1>Главная страница</h1>
+<h1 class="text-center">Главная страница</h1>
 
 <div>
     <h3>Описание предметной области.</h3>
@@ -32,7 +32,7 @@
         </ul>
 </div>
 
-<ul>
-    <li><a href="<?= $app_root ?>books/index">Список книг</a></li>
-    <li><a href="<?= $app_root ?>authors/index">Список авторов</a></li>
-</ul>
+<div class="text-center">
+    <a class="btn btn-secondary" href="<?= $app_root ?>books/index">Список книг</a>
+    <a class="btn btn-secondary" href="<?= $app_root ?>authors/index">Список авторов</a>
+</div>

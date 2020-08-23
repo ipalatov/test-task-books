@@ -1,29 +1,52 @@
-<h1>Добавление новой книги</h1>
+<h1 class="text-center">Добавление новой книги</h1>
 
-<div style="padding: 20px;">
+<div>
     <form method="POST" action="">
-        <label for="title">Название книги</label>
-        <input id="title" type="text" name="title" value="<?= $_SESSION['title'] ?? null ?>"><br>
+        <div class="form-group">
+            <label for="title">Название книги</label>
+            <input class="form-control w-75" id="title" type="text" name="title" aria-describedby="titleHelp" value="<?= $_SESSION['title'] ?? null ?>">
+            <small id="titleHelp" class="form-text text-muted">символов: мин - 3, макс - 250. Уникальность </small>
 
-        <label for="authors_id">Автор</label><br>
-        <?php foreach ($authors as $author) : ?>
-            <input type="checkbox" <?php
-                                    if (isset($_SESSION['authors_id'])) {
-                                        foreach ($_SESSION['authors_id'] as $sessionAuthor) {
-                                            if ($sessionAuthor == $author['id']) echo 'checked';
-                                        }
+        </div>
+        <div class="row">
+            <div class="col">
+                Автор
+                <?php foreach ($authors as $author) : ?>
+                    <div class="custom-control custom-checkbox">
+                        <input <?php
+                                if (isset($_SESSION['authors_id'])) {
+                                    foreach ($_SESSION['authors_id'] as $sessionAuthor) {
+                                        if ($sessionAuthor == $author['id']) echo 'checked';
                                     }
-                                    ?> id="authors_id" name="authors_id[]" value="<?= $author['id'] ?>"><?= htmlspecialchars($author['name']) ?><br>
-        <?php endforeach; ?>
+                                }
+                                ?> class="custom-control-input" type="checkbox" id="authors_id<?= $author['id']; ?>" name="authors_id[]" value="<?= $author['id'] ?>">
+                        <label class="custom-control-label" for="authors_id<?= $author['id']; ?>">
+                            <?= htmlspecialchars($author['name']) ?>
+                        </label>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="col">
+                Жанр
+                <?php foreach ($genres as $genre) : ?>
+                    <div class="custom-control custom-radio">
+                        <input <?=
+                                    (isset($_SESSION['genre_id']) && $genre['id'] == $_SESSION['genre_id']) ? 'checked' : ''
+                                ?> class="custom-control-input" type="radio" id="genre_id<?= $genre['id']; ?>" name="genre_id" value="<?= $genre['id'] ?>">
+                        <label class="custom-control-label" for="genre_id<?= $genre['id']; ?>">
+                            <?= $genre['name'] ?>
+                        </label><br>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
 
-        <label for="genre_id">Жанр</label><br>
-        <?php foreach ($genres as $genre) : ?>
-            <input type="radio" <?= (isset($_SESSION['genre_id']) && $genre['id'] == $_SESSION['genre_id']) ? 'checked' : '' ?> id="genre_id" name="genre_id" value="<?= $genre['id'] ?>"><?= $genre['name'] ?><br>
-        <?php endforeach; ?>
+        <div class="form-group">
+            <label for="year">Год издания</label>
+            <input class="form-control w-25" id="year" type="number" name="year" aria-describedby="yearHelp" value="<?= $_SESSION['year'] ?? null ?>">
+            <small id="yearHelp" class="form-text text-muted">не больше текущего года</small>
+        </div>
 
-        <label for="year">Год издания</label>
-        <input id="year" type="number" name="year" value="<?= $_SESSION['year'] ?? null ?>"><br>
-
-        <p><input type="submit" name="submit" value="Добавить"><input type="submit" name="reset" value="Сбросить"></p>
+        <input class="btn btn-primary" type="submit" name="submit" value="Добавить"><input class="btn btn-light" type="submit" name="reset" value="Сбросить">
     </form>
 </div>

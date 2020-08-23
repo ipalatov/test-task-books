@@ -1,38 +1,30 @@
-<h1>Информация о книге</h1>
+<h1 class="text-center">Информация о книге</h1>
 <br>
 
-<div style="padding: 20px;">
-    <table>
-        <tr>
-            <td>
-                <span>Название</span>
-            </td>
-            <td>
-                <span>Жанр</span>
-            </td>
-            <td>
-                <span>Автор</span>
-            </td>
-            <td>
-                <span>Год издания</span>
-            </td>
-        </tr>
+<div class="card border-primary mb-3">
 
-        <tr>
-            <td>
-                <span><?= htmlspecialchars($book['title']) ?></span>
-            </td>
-            <td>
-                <span><?= $book['genre'] ?></span>
-            </td>
-            <td>
-                <span><?= htmlspecialchars($book['author']) ?></span>
-            </td>
-            <td>
-                <span><?= $book['year'] ?></span>
-            </td>
-        </tr>
-    </table>
+
+
+    <div class="card-header">Название</div>
+    <div class="card-body text-primary">
+        <h5 class="card-title text-dark"><?= htmlspecialchars($book['title']) ?></h5>
+    </div>
+    <div class="card-header">Жанр</div>
+    <div class="card-body text-primary">
+        <h5 class="card-title text-dark"><?= $book['genre'] ?></h5>
+    </div>
+    <div class="card-header">Автор</div>
+    <div class="card-body text-primary">
+        <h5 class="card-title text-dark"><?= htmlspecialchars($book['author']) ?></h5>
+    </div>
+    <div class="card-header">Год издания</div>
+    <div class="card-body text-primary">
+        <h5 class="card-title text-dark"><?= $book['year'] ?></h5>
+    </div>
+    <div class="card-header">Описание</div>
+    <div class="card-body text-primary">
+        <p class="card-text text-dark">Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati vitae ea at ut laudantium suscipit accusamus magnam, blanditiis quia? Tenetur consequuntur accusamus ad qui totam aliquam sit delectus accusantium adipisci.</p>
+    </div>
 
 </div>
 

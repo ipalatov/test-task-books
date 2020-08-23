@@ -1,32 +1,57 @@
-<h1>Редактирование книги</h1>
+<h1 class="text-center">Редактирование книги </h1>
+<h2><?= htmlspecialchars($book['title']) ?></h2>
 
 <?php
 $book['author'] = explode(', ', $book['author']);
 ?>
 
-<div style="padding: 20px;">
+<div>
     <form method="POST" action="">
-        <label for="title">Название книги</label>
-        <input id="title" type="text" name="title" value="<?= htmlspecialchars($book['title']) ?>"><br>
+        <div class="form-group">
+            <label for="title">Название книги</label>
+            <input class="form-control w-75" id="title" type="text" name="title" aria-describedby="titleHelp" value="<?= htmlspecialchars($book['title']) ?>">
+            <small id="titleHelp" class="form-text text-muted">символов: мин - 3, макс - 250. Уникальность </small>
+        </div>
+        <div class="row">
+            <div class="col">
+                Автор
+                <?php foreach ($authors as $author) : ?>
+                    <div class="custom-control custom-checkbox">
+                        <input <?php foreach ($book['author'] as $bookAuthor) {
+                                    if ($bookAuthor == $author['name']) echo 'checked';
+                                }
+                                ?> class="custom-control-input" type="checkbox" id="authors_id<?= $author['id']; ?>" name="authors_id[]" value="<?= $author['id'] ?>">
+                        <label class="custom-control-label" for="authors_id<?= $author['id']; ?>">
+                            <?= htmlspecialchars($author['name']) ?>
+                        </label>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <div class="col">
+                Жанр
+                <?php foreach ($genres as $genre) : ?>
+                    <div class="custom-control custom-radio">
+                        <input <?=
+                                    ($genre['name'] == $book['genre']) ? 'checked' : ''
+                                ?> class="custom-control-input" type="radio" id="genre_id<?= $genre['id']; ?>" name="genre_id" value="<?= $genre['id'] ?>">
+                        <label class="custom-control-label" for="genre_id<?= $genre['id']; ?>">
+                            <?= $genre['name']  ?>
+                        </label>
 
-        <label for="authors_id">Автор</label><br>
-        <?php foreach ($authors as $author) : ?>
-            <input type="checkbox" <?php foreach ($book['author'] as $bookAuthor) {
-                                        if ($bookAuthor == $author['name']) echo 'checked';
-                                    }
-                                    ?> id="authors_id" name="authors_id[]" value="<?= $author['id'] ?>"><?= htmlspecialchars($author['name']) ?><br>
-        <?php endforeach; ?>
 
-        <label for="genre_id">Жанр</label><br>
-        <?php foreach ($genres as $genre) : ?>
-            <input type="radio" <?= ($genre['name'] == $book['genre']) ? 'checked' : '' ?> id="genre_id" name="genre_id" value="<?= $genre['id'] ?>"><?= $genre['name']  ?><br>
-        <?php endforeach; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
 
 
-        <label for="year">Год издания</label>
-        <input id="year" type="number" name="year" value="<?= $book['year'] ?>"><br>
+        <div class="form-group">
+            <label for="year">Год издания</label>
+            <input id="year" type="number" name="year" value="<?= $book['year'] ?>">
+            <small id="yearHelp" class="form-text text-muted">не больше текущего года</small>
+        </div>
 
-        <p><input type="submit" name="submit" value="Сохранить изменения"></p>
+        <p><input class="btn btn-primary" type="submit" name="submit" value="Сохранить изменения"></p>
     </form>
 </div>
 
