@@ -4,27 +4,74 @@ namespace App\core;
 
 class Pagination
 {
+
+    /**
+     * Текущая страница
+     * 
+     * @var int 
+     */
     public $currentPage;
+
+    /**
+     * Количество элементов на странице
+     * 
+     * @var int 
+     */
+
     public $pageSize;
+
+    /**
+     * Всего элементов
+     * 
+     * @var int
+     */
+
     public $total;
+
+    /**
+     * Количество страниц
+     * 
+     * @var int
+     */
     public $countPages;
+
+    /**
+     * URI для сохранения других параметров запроса в строке(помимо номера страницы)
+     * 
+     * @var string 
+     */
     public $uri;
 
+    /**
+     * @param int $page Страница, полученная из GET запроса
+     * @param int $pageSize Заданный размер страницы (количество элементов на странице)
+     * @param int $total Всего элементов
+     */
     public function __construct($page, $pageSize, $total)
     {
-        $this->pageSize = $pageSize; // размер страницы, количество записей на странице
-        $this->total = $total; // всего записей
-        $this->countPages = $this->getCountPages(); // количество страниц
-        $this->currentPage = $this->getCurrenPage($page); // текущая страница
-        $this->uri = $this->getParams(); // uri для сохранения других параметров запроса в строке(помимо номера страницы)
+        $this->pageSize = $pageSize;
+        $this->total = $total;
+        $this->countPages = $this->getCountPages();
+        $this->currentPage = $this->getCurrenPage($page);
+        $this->uri = $this->getParams();
     }
 
+    /**
+     * Вычисляет и возвращает количество страниц
+     * 
+     * @return int
+     */
     public function getCountPages()
     {
-        $countPages = ceil($this->total / $this->pageSize) > 0 ? ceil($this->total / $this->pageSize) : 1;
+        $countPages = ceil($this->total / $this->pageSize) > 0 ? (int) ceil($this->total / $this->pageSize) : 1;
         return $countPages;
     }
 
+    /**
+     * Вычисляет и возвращает текущую страницу
+     * 
+     * @return int
+     */
     public function getCurrenPage(int $page)
     {
 
@@ -33,14 +80,22 @@ class Pagination
         return $page;
     }
 
-    // возвращает OFFSET для sql запроса 
+    /**
+     * Вычисляет и возвращает OFFSET для sql запроса
+     * 
+     * @return int
+     */
     public function getOffset()
     {
         $offset = ($this->currentPage - 1) * $this->pageSize;
         return $offset;
     }
 
-    // навигация
+    /**
+     * Возвращает HTML-код кнопок навигации
+     * 
+     * @return string
+     */
     public function getHTML()
     {
         $back = null;
@@ -83,8 +138,6 @@ class Pagination
         }
         $this->currentPage = "<a class='btn btn-secondary' href='{$this->uri}page=" . $this->currentPage  . "'> " . $this->currentPage . " </a>";
 
-
-
         $startPageHtml = '<li class="page-item">' . $startPage . '</li>';
         $backHtml = '<li class="page-item">' . $back . '</li>';
         $page2leftHtml = '<li class="page-item">' . $page2left . '</li>';
@@ -106,7 +159,12 @@ class Pagination
         return $paginationHtml;
     }
 
-    // сохранение других параметров запроса в строке(помимо номера страницы)
+    /**
+     * Получает другие параметры запроса в строке(помимо номера страницы page=) 
+     * с целью не потерять их при навигации между страницами
+     * 
+     * @return string
+     */
     public function getParams()
     {
         $url = $_SERVER['REQUEST_URI'];

@@ -8,23 +8,43 @@ use PDO;
 
 class Book extends Model
 {
+
+    /**
+     * Экземпляры класса
+     * 
+     * @var array 
+     */
     private static $bookInstances = [];
+
+    /**
+     * Закрытие конструктора (protected) от создания объекта через оператор new
+     * */
 
     protected function __construct()
     {
         parent::__construct();
     }
 
+    /**
+     * Закрытие (protected) от клонивания объекта
+     */
     protected function __clone()
     {
     }
 
+    /**
+     *  Одиночки не должны быть восстанавливаемыми из строк.
+     */
     public function __wakeup()
     {
         throw new \Exception("Cannot unserialize a singleton.");
     }
 
-    // синглтон для создания не более одного эксземпляра модели
+    /**
+     * Метод создания не более одного объекта класса
+     * 
+     * @return Book
+     */
     public static function getInstance(): Book
     {
         $cls = static::class;
@@ -35,8 +55,14 @@ class Book extends Model
     }
 
 
-
-    static function getQueryAuthors() //получение фильтров, запись их в сессию, составление переменных для запроса
+    /**
+     * Получает данные фильтра по автору, записывает в сессию и возвращает строку для применения в SQL запросе
+     * 
+     * @var array $_POST['authorFilter'] Массив, полученный из POST запроса
+     * @var string $filterAuthors Строка, полученная из массива для использования в sql-операторе IN 
+     * @return string Строка на основе данных фильтра по автору, которая будет использоваться в итоговом SQL запросе
+     */
+    static function getQueryAuthors()
     {
         if (isset($_POST['authorFilter'])) {
             $_SESSION['authorFilter'] = $_POST['authorFilter'];
@@ -49,6 +75,13 @@ class Book extends Model
         return $queryAuthors;
     }
 
+    /**
+     * Получает данные фильтра по жанру, записывает в сессию и возвращает строку для применения в SQL запросе
+     * 
+     * @var array $_POST['genreFilter'] Массив, полученный из POST запроса
+     * @var string $filterGenres Строка, полученная из массива для использования в sql-операторе IN 
+     * @return string Строка на основе данных фильтра по жанру, которая будет использоваться в итоговом SQL запросе
+     */
     static function getQueryGenres()
     {
         if (isset($_POST['genreFilter'])) {
@@ -63,6 +96,13 @@ class Book extends Model
         return $queryGenres;
     }
 
+    /**
+     *  Получает данные фильтра по годам, записывает в сессию и возвращает строку для применения в SQL запросе
+     * 
+     * @var int ($_POST['startYearFilter']) Начальный год, полученный из POST запроса
+     * @var int ($_POST['endYearFilter'])Конечный год, полученный из POST запроса
+     * @return string Строка на основе данных фильтра по годам, которая будет использоваться в итоговом SQL запросе
+     */
     static function getQueryYears()
     {
         if (isset($_POST['startYearFilter']) && $_POST['startYearFilter'] > 0) {
@@ -94,7 +134,12 @@ class Book extends Model
         return $queryYears;
     }
 
-    public function resetFilters() // сброс фильтров из сессии
+    /**
+     * Сбрасывает все фильтры, записанные в сессию
+     * 
+     * @return void
+     */
+    public function resetFilters()
     {
         if (isset($_POST['reset_filter'])) {
             unset($_SESSION['authorFilter']);
@@ -107,10 +152,13 @@ class Book extends Model
         }
     }
 
-    // получение общего количества записей по условиям фильтра
+    /**
+     * Получает общее количество записей по условиям фильтра
+     * 
+     * @return int
+     */
     public function getTotal()
     {
-        // переменные для запроса по условиям фильтра
         $queryAuthors = static::getQueryAuthors();
         $queryGenres = static::getQueryGenres();
         $queryYears = static::getQueryYears();
@@ -124,7 +172,6 @@ class Book extends Model
         $pdoStat = $this->pdo->prepare($sql);
         $pdoStat->execute();
 
-        // проверка ошибок
         $errorInfo = $pdoStat->errorInfo();
         if ($errorInfo[1]) {
             $_SESSION['error'] = 'ошибка: код ' . ' ' . $errorInfo[1] . ' - ' . $errorInfo[2];
@@ -136,6 +183,11 @@ class Book extends Model
         return $total['count'];
     }
 
+    /**
+     * Получает тип сортировки из GET запроса
+     * 
+     * @return string Строка c данными сортировки, которая будет использоваться в итоговом SQL запросе
+     */
     static function getSorting()
     {
         $sorting = 'book_id ASC';
@@ -159,18 +211,22 @@ class Book extends Model
         return $sorting;
     }
 
-
-    public function getIndex($offset = null, $limit = null)
+    /**
+     * Возвращает список всех книг на странице с учетом сортировки, фильтров и пагинации
+     * 
+     * @param int $offset Смещение для sql-оператора LIMIT 
+     * @param int $limit Количество элементов на странице для sql-оператора LIMIT 
+     * @return array
+     */
+    public function getIndex($offset, $limit)
     {
-        // сортировка
         $sorting = static::getSorting();
 
-        // переменные для запроса по условиям фильтра
         $queryAuthors = static::getQueryAuthors();
         $queryGenres = static::getQueryGenres();
         $queryYears = static::getQueryYears();
 
-        // запрос на список книг с конкатенацией по столбцу authors.name, с условиями по фильтру и сортировкой
+        // запрос на список книг на странице (с конкатенацией по столбцу authors.name), с условиями по фильтру, сортировкой
         $sql = "SELECT books.id, books.title, genres.name as genre, books.year, GROUP_CONCAT(authors.name SEPARATOR ', ')
         as author FROM book_author
         JOIN books ON (books.id = book_author.book_id)
@@ -203,6 +259,11 @@ class Book extends Model
         return $books;
     }
 
+    /**
+     * Получает id книги из GET запроса и осуществляет проверку на существование такого в базе данных
+     * 
+     * @return int
+     */
     public function getIdFromUrl()
     {
         // берет id из get запроса
@@ -228,11 +289,15 @@ class Book extends Model
         return $id;
     }
 
+    /**
+     * Возвращает из базы данных одну запись (книга) по id из GET запроса
+     * 
+     * @return array
+     */
     public function getOne()
     {
         $id = $this->getIdFromUrl();
 
-        // запрос на одну книгу с конкатенацией по столбцу authors.name
         $sql = "SELECT books.id, books.title, genres.name as genre, books.year, GROUP_CONCAT(authors.name SEPARATOR ', ')
         as author FROM book_author
         JOIN books ON (books.id = book_author.book_id)
@@ -250,43 +315,62 @@ class Book extends Model
             die;
         }
 
-        $book = $pdoStat->fetch(\PDO::FETCH_ASSOC);
+        $book = (array) $pdoStat->fetch(\PDO::FETCH_ASSOC);
 
         return $book;
     }
 
-    function validateTitle($title, int $id = null)
+    /**
+     * Проверяет строку на длину, а также уникальность в БД, с помощью абстрактного класса Validator
+     * 
+     * @param string $name
+     * @param int|null $id
+     * @return string Та же строка, если прошла все проверки
+     */
+    function validateTitle(string $title, int $id = null)
     {
-        // валидация мин и макс длину строки
         Validator::checkStringMin($title, 3);
         Validator::checkStringMax($title, 250);
 
-        // валидация на уникальность 
         Validator::checkUniqField('books', 'title', $title, $id);
 
         return $title;
     }
 
-    function validateYear($year)
+    /**
+     * Проверяет число, д.б. не больше текущего года, с помощью абстрактного класса Validator
+     * 
+     * @param int $year
+     * @return int То же число, если прошло все проверки
+     */
+    function validateYear(int $year)
     {
-        // валидация на год издания, д.б. не больше текущего
         Validator::checkCurrentYear($year);
 
         return $year;
     }
 
-    public function resetFormData() // сброс фильтров из сессии
+    /**
+     * Сбрасывает все данные формы , записанные в сессию
+     * 
+     * @return void
+     */
+    public function resetFormData()
     {
-        if (isset($_POST['reset'])) {
-            unset($_SESSION['title']);
-            unset($_SESSION['authors_id']);
-            unset($_SESSION['genre_id']);
-            unset($_SESSION['year']);
-            unset($_POST['reset_filter']);
-            header('Refresh:0');
-            die;
-        }
+        unset($_SESSION['title']);
+        unset($_SESSION['authors_id']);
+        unset($_SESSION['genre_id']);
+        unset($_SESSION['year']);
+        unset($_POST['reset_filter']);
+        header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
+        die;
     }
+
+    /**
+     * Получает данные из формы, записывает в сессию, валидирует и добавляет в БД
+     * 
+     * @return void 
+     */
     public function addBook()
     {
         if (isset($_POST['submit'])) {
@@ -303,6 +387,7 @@ class Book extends Model
             $sqlBook = "INSERT INTO books (`title`, `genre_id`, `year`) VALUES (:title, :genre_id , :year)";
             $pdoStat = $this->pdo->prepare($sqlBook);
             $pdoStat->execute(compact('title', 'genre_id', 'year'));
+
             // проверяем ошибки 
             $errorInfo = $pdoStat->errorInfo();
             if ($errorInfo[1]) {
@@ -327,17 +412,23 @@ class Book extends Model
                 }
             }
 
+            // сообщение об успешности и сброс данных формы , записанных в сессию
             $_SESSION['message'] = "Запись [#$lastId] успешно добавлена в базу данных!";
-            unset($_SESSION['title']);
-            unset($_SESSION['authors_id']);
-            unset($_SESSION['genre_id']);
-            unset($_SESSION['year']);
+            $this->resetFormData();
             header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
             die;
         }
-        $this->resetFormData();
+        if (isset($_POST['reset'])) {
+            $this->resetFormData();
+        }
     }
 
+    /**
+     * Получает данные из формы, валидирует и обновляет в БД по $id книги
+     * 
+     * @param int $id id книги
+     * @return void 
+     */
     public function updateBook($id)
     {
         if (isset($_POST['submit'])) {
@@ -362,7 +453,6 @@ class Book extends Model
                 header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
                 die;
             }
-
             // удаляем в связующей таблице записи по id книги и добавляем новые записи id каждого автора из формы
             $delSql = "DELETE FROM book_author WHERE `book_id`= :id";
             $pdoStat = $this->pdo->prepare($delSql);
@@ -391,11 +481,17 @@ class Book extends Model
             die;
         };
     }
+
+    /**
+     * Удаляет книгу из БД по $id
+     * 
+     * @param int $id id автора
+     * @return void 
+     */
     public function deleteBook($id)
     {
         if (isset($_POST['submit'])) {
 
-            // удаление книги и сообщение об успешности или ошибке
             $delSql = "DELETE FROM books WHERE `id`= :id";
             $pdoStat = $this->pdo->prepare($delSql);
             $pdoStat->execute(compact('id'));
@@ -417,9 +513,14 @@ class Book extends Model
         }
     }
 
+    /**
+     * Получает список книг по id автора
+     * 
+     * @param int $authorId
+     * @return array
+     */
     public function getBooksByAuthor($authorId)
     {
-        // получение списка книг по id автора
         $sql = "SELECT books.id, books.title, genres.name as genre, books.year FROM book_author
         JOIN books ON (books.id = book_author.book_id)
         JOIN authors ON (authors.id = book_author.author_id)

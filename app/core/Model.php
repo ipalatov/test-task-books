@@ -4,6 +4,11 @@ namespace App\core;
 
 abstract class Model
 {
+    /**
+     * Соединение PDO с базой данных
+     * 
+     * @var \PDO
+     */
     public $pdo;
 
     protected function __construct()
@@ -11,6 +16,11 @@ abstract class Model
         $this->pdo = static::DBConnect();
     }
 
+    /**
+     * Устанавливает соединение с базой данных
+     * 
+     * @return \PDO
+     */
     static function DBConnect()
     {
         $ini = parse_ini_file('./app/config.ini');
@@ -26,5 +36,9 @@ abstract class Model
 
         return $pdo;
     }
+
+    /**
+     * Реализовать метод создания не более одного объекта класса
+     */
     abstract static function getInstance();
 }
