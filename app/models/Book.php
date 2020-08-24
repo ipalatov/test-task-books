@@ -102,7 +102,7 @@ class Book extends Model
             unset($_SESSION['startYearFilter']);
             unset($_SESSION['endYearFilter']);
             unset($_POST['reset_filter']);
-            header('Refresh:0');
+            header("Location: " . $_SERVER["REQUEST_URI"], true, 303);
             die;
         }
     }
@@ -147,6 +147,9 @@ class Book extends Model
                     break;
                 case 'year';
                     $sorting = 'year ASC';
+                    break;
+                case 'id_desc';
+                    $sorting = 'book_id DESC';
                     break;
                 default:
                     $sorting = 'book_id ASC';
@@ -406,6 +409,10 @@ class Book extends Model
 
             $_SESSION['message'] = "Запись [#$id] успешно удалена!";
             header("Location: /books/index", true, 303);
+            die;
+        }
+        if (isset($_POST['noDelete'])) {
+            header("Location: /books/show?id=$id", true, 303);
             die;
         }
     }

@@ -3,13 +3,15 @@
 <div class="row">
     <div class="col-9">
         <div>
+            Сортировка по:
             <ul class="list-group list-group-horizontal">
-                <li class="list-group-item" style="border: 0;">Сортировка по:</li>
                 <li class="list-group-item " style="border: 0;"><a href=" ?sort=title">названию</a></li>
                 <li class="list-group-item" style="border: 0;">|</li>
                 <li class="list-group-item" style="border: 0;"><a href="?sort=year">по году издания</a></li>
                 <li class="list-group-item" style="border: 0;">|</li>
                 <li class="list-group-item" style="border: 0;"><a href="?">без сортировки</a></li>
+                <li class="list-group-item" style="border: 0;">|</li>
+                <li class="list-group-item" style="border: 0;"><a href="?sort=id_desc">сначала новые</a></li>
             </ul>
 
         </div>

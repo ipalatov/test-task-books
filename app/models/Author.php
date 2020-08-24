@@ -178,6 +178,10 @@ class Author extends Model
                 header("Location: /authors/index", true, 303);
                 die;
             }
-        };
+        }
+        if (isset($_POST['noDelete'])) {
+            header("Location: /authors/show?id=$id", true, 303);
+            die;
+        }
     }
 }
